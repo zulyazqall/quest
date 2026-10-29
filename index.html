@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🐍 Python Quest: List Wizard — SIS</title>
+    <style>
+      /* ============================================================
+     SAPPORO INTERNATIONAL SCHOOL COLOR THEME
+     Green  #0B7B3E  — primary / success / buttons
+     Black  #010101  — background / depth
+     Red    #EE2649  — accent / errors / stars
+     ============================================================ */
+      :root {
+        --sis-green: #0b7b3e;
+        --sis-green-light: #14a855;
+        --sis-green-dark: #075a2c;
+        --sis-black: #010101;
+        --sis-black-soft: #0d0d0d;
+        --sis-black-panel: #141414;
+        --sis-red: #ee2649;
+        --sis-red-dark: #b81a37;
+        --text: #f4f4f4;
+        --muted: #a8a8a8;
+        --border: #262626;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background:
+          radial-gradient(
+            900px 500px at 15% -10%,
+            rgba(11, 123, 62, 0.25),
+            transparent 60%
+          ),
+          radial-gradient(
+            700px 400px at 90% 110%,
+            rgba(238, 38, 73, 0.18),
+            transparent 60%
+          ),
+          var(--sis-black);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      /* ============ HEADER ============ */
+      header {
+        text-align: center;
+        padding: 26px 16px 10px;
+        border-bottom: 2px solid var(--sis-green);
+        background: linear-gradient(
+          180deg,
+          rgba(11, 123, 62, 0.15),
+          transparent
+        );
+      }
+      header h1 {
+        margin: 0;
+        font-size: 2rem;
+        letter-spacing: 1px;
+        color: #ffffff;
+      }
+      header h1 .sis-green {
+        color: var(--sis-green-light);
+      }
+      header h1 .sis-red {
+        color: var(--sis-red);
+      }
+      header p {
+        color: var(--muted);
+        margin: 6px 0 0;
+        font-size: 0.92rem;
+      }
+
+      /* ============ LAYOUT ============ */
+      .layout {
+        display: grid;
+        grid-template-columns: 260px 1fr 380px;
+        gap: 16px;
+        padding: 16px;
+        max-width: 1500px;
+        margin: 0 auto;
+      }
+      @media (max-width: 1100px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ============ PANELS ============ */
+      .panel {
+        background: linear-gradient(
+          180deg,
+          var(--sis-black-panel),
+          var(--sis-black-soft)
+        );
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--sis-green);
+        border-radius: 14px;
+        padding: 14px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      }
+      .panel h3 {
+        color: var(--sis-green-light);
+        margin-top: 0;
+      }
+
+      /* ============ LEVEL LIST ============ */
+      .levels {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .levels li {
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        border-radius: 10px;
+        background: #0a0a0a;
+        border: 1px solid var(--border);
+        border-left: 3px solid transparent;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.18s;
+        font-size: 0.9rem;
+        color: var(--text);
+      }
+      .levels li:hover {
+        border-left-color: var(--sis-green);
+        background: #0f0f0f;
+        transform: translateX(2px);
+      }
+      .levels li.active {
+        border-left-color: var(--sis-red);
+        background: linear-gradient(
+          90deg,
+          rgba(11, 123, 62, 0.18),
+          transparent
+        );
+        color: #ffffff;
+      }
+      .levels li.locked {
+        opacity: 0.38;
+        cursor: not-allowed;
+      }
+      .levels li.locked:hover {
+        transform: none;
+        border-left-color: transparent;
+      }
+
+      .star {
+        color: var(--sis-red);
+        text-shadow: 0 0 8px rgba(238, 38, 73, 0.6);
+      }
+
+      /* ============ TASK ============ */
+      .task h2 {
+        margin: 0 0 6px;
+        font-size: 1.2rem;
+        color: var(--sis-green-light);
+      }
+      .task .goal {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-bottom: 10px;
+      }
+      .task pre {
+        background: var(--sis-black);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--sis-red);
+        border-radius: 10px;
+        padding: 10px;
+        overflow-x: auto;
+        font-size: 0.85rem;
+        color: #d8d8d8;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 300px;
+        background: var(--sis-black);
+        color: #eaeaea;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        resize: vertical;
+        caret-color: var(--sis-green-light);
+      }
+      textarea:focus {
+        outline: none;
+        border-color: var(--sis-green);
+        box-shadow: 0 0 0 2px rgba(11, 123, 62, 0.3);
+      }
+
+      /* ============ BUTTONS ============ */
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      button {
+        background: linear-gradient(
+          180deg,
+          var(--sis-green-light),
+          var(--sis-green)
+        );
+        color: #ffffff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 0.92rem;
+        transition: 0.15s;
+        letter-spacing: 0.3px;
+      }
+      button:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.12);
+        box-shadow: 0 4px 14px rgba(11, 123, 62, 0.5);
+      }
+      button.ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      button.ghost:hover {
+        border-color: var(--sis-red);
+        color: var(--sis-red);
+        box-shadow: 0 4px 14px rgba(238, 38, 73, 0.25);
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* ============ CONSOLE ============ */
+      .console {
+        background: var(--sis-black);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--sis-green);
+        border-radius: 10px;
+        padding: 12px;
+        height: 420px;
+        overflow-y: auto;
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 0.85rem;
+        white-space: pre-wrap;
+        color: var(--sis-green-light);
+      }
+      .console .err {
+        color: var(--sis-red);
+      }
+      .console .ok {
+        color: var(--sis-green-light);
+      }
+      .console .gold {
+        color: var(--sis-red);
+        font-weight: 700;
+      }
+
+      /* ============ TOAST ============ */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(
+          180deg,
+          var(--sis-green),
+          var(--sis-green-dark)
+        );
+        border: 2px solid var(--sis-red);
+        color: #ffffff;
+        padding: 14px 22px;
+        border-radius: 12px;
+        font-weight: 800;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: 0.4s;
+        pointer-events: none;
+        z-index: 999;
+        box-shadow: 0 8px 30px rgba(238, 38, 73, 0.4);
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ============ PROGRESS ============ */
+      .progress {
+        height: 10px;
+        background: var(--sis-black);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 8px;
+        border: 1px solid var(--border);
+      }
+      .progress > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--sis-green), var(--sis-red));
+        transition: 0.4s;
+        box-shadow: 0 0 10px rgba(238, 38, 73, 0.5);
+      }
+
+      .hint {
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      .loading {
+        color: var(--sis-green-light);
+        text-align: center;
+        padding: 20px;
+      }
+
+      /* ============ SCROLLBAR ============ */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--sis-black);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--sis-green);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--sis-red);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <span class="sis-green">🐍 Python Quest</span>
+        <span class="sis-red">·</span>
+        List Wizard
+      </h1>
+      <p>Sapporo International School · 10 Levels · Become the List Master</p>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT: Levels -->
+      <aside class="panel">
+        <h3>🗺️ Level Map</h3>
+        <ul class="levels" id="levelList"></ul>
+        <div class="progress"><div id="progressBar"></div></div>
+        <p class="hint" id="progressText">0 / 10 complete</p>
+      </aside>
+
+      <!-- CENTER: Task + Editor -->
+      <main class="panel task">
+        <h2 id="taskTitle">Loading...</h2>
+        <div class="goal" id="taskGoal"></div>
+        <pre id="taskExample"></pre>
+        <textarea id="editor" spellcheck="false"></textarea>
+        <div class="controls">
+          <button id="runBtn" disabled>▶ Run Code</button>
+          <button class="ghost" id="resetBtn">↺ Reset</button>
+          <button class="ghost" id="hintBtn">💡 Hint</button>
+        </div>
+        <p class="hint" id="statusLine">Waiting for Python engine...</p>
+      </main>
+
+      <!-- RIGHT: Console -->
+      <aside class="panel">
+        <h3>🖥️ Console</h3>
+        <div class="console" id="console"></div>
+      </aside>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+    <script>
+      /* ============================================================
+   LEVEL DEFINITIONS
+   ============================================================ */
+      const LEVELS = [
+        {
+          title: "Level 1 — Spellbook Starter",
+          goal: "Create a list of 3 spells and print each one on its own line.",
+          example: `# Print all 3 spells from the list
+spells = ["fireball", "heal", "shield"]`,
+          starter: `spells = ["fireball", "heal", "shield"]
+
+# TODO: print each spell on its own line
+`,
+          test: (out) =>
+            ["fireball", "heal", "shield"].every((s) => out.includes(s)),
+          hint: "Use a for loop: for s in spells: print(s)",
+        },
+        {
+          title: "Level 2 — Add-a-Spell",
+          goal: "Start with spells = ['fireball']. Use append() to add at least 2 more spells, then print the final list.",
+          example: `spells = ["fireball"]
+spells.append("ice")
+print(spells)`,
+          starter: `spells = ["fireball"]
+
+# TODO: append at least 2 more spells, then print the final list
+`,
+          test: (out) =>
+            (out.match(/\[.*\]/) || [""])[0].split(",").length >= 3,
+          hint: 'spells.append("ice") then spells.append("wind") then print(spells)',
+        },
+        {
+          title: "Level 3 — Spell Counter",
+          goal: "Given spells = ['fire','ice','fire','wind','fire'], print the total count AND how many are 'fire'.",
+          example: `spells = ["fire", "ice", "fire"]
+print(len(spells))
+print(spells.count("fire"))`,
+          starter: `spells = ["fire", "ice", "fire", "wind", "fire"]
+
+# TODO: print total count, then count of "fire"
+`,
+          test: (out) => out.includes("5") && out.includes("3"),
+          hint: 'print(len(spells)) and print(spells.count("fire"))',
+        },
+        {
+          title: "Level 4 — Find the Rune",
+          goal: "Search for 'ice' in the list. Print 'Found at INDEX' if present, else 'Not found'.",
+          example: `spells = ["fire", "ice", "wind"]
+if "ice" in spells:
+    print("Found at", spells.index("ice"))`,
+          starter: `spells = ["fire", "ice", "wind"]
+target = "ice"
+
+# TODO: check if target is in spells
+# if yes: print "Found at", index
+# if no:  print "Not found"
+`,
+          test: (out) => out.toLowerCase().includes("found"),
+          hint: "Use 'in' to check, then spells.index(target).",
+        },
+        {
+          title: "Level 5 — Remove the Curse",
+          goal: "Given spells = ['fire','ice','wind','ice'], remove 'ice' and pop the last item. Print the final list.",
+          example: `spells = ["fire", "ice"]
+spells.remove("ice")
+spells.pop()
+print(spells)`,
+          starter: `spells = ["fire", "ice", "wind", "ice"]
+
+# TODO: remove "ice" (first one), then pop() the last item
+# print the final list
+`,
+          test: (out) =>
+            out.includes("fire") &&
+            out.includes("wind") &&
+            !out.includes("ice"),
+          hint: 'spells.remove("ice") then spells.pop() then print(spells)',
+        },
+        {
+          title: "Level 6 — Sort the Potions",
+          goal: "Given potions = ['mana','health','speed','luck'], print the sorted list, then print the reversed sorted list.",
+          example: `p = ["b", "a"]
+p.sort()
+print(p)
+p.reverse()
+print(p)`,
+          starter: `potions = ["mana", "health", "speed", "luck"]
+
+# TODO: sort(), print it, reverse(), print it again
+`,
+          test: (out) => {
+            const o = out.toLowerCase();
+            return (
+              o.includes("health") &&
+              o.includes("luck") &&
+              o.includes("mana") &&
+              o.includes("speed")
+            );
+          },
+          hint: "potions.sort(); print(potions); potions.reverse(); print(potions)",
+        },
+        {
+          title: "Level 7 — Slice the Scroll",
+          goal: "Given 8 scrolls, print the first 3, then the last 2, then the middle (index 2 to 5).",
+          example: `s = ["a","b","c","d"]
+print(s[:2])
+print(s[-2:])
+print(s[1:3])`,
+          starter: `scrolls = ["s1","s2","s3","s4","s5","s6","s7","s8"]
+
+# TODO: print scrolls[:3], scrolls[-2:], scrolls[2:5]
+`,
+          test: (out) =>
+            out.includes("s1") && out.includes("s7") && out.includes("s3"),
+          hint: "print(scrolls[:3]); print(scrolls[-2:]); print(scrolls[2:5])",
+        },
+        {
+          title: "Level 8 — Merge Grimoires",
+          goal: "Combine book1 and book2 into a new list with '+', then extend book1 with book2. Print both results.",
+          example: `a = ["x"]; b = ["y"]
+c = a + b
+a.extend(b)
+print(c); print(a)`,
+          starter: `book1 = ["spell1", "spell2"]
+book2 = ["spell3", "spell4"]
+
+# TODO: new_list = book1 + book2  → print it
+# TODO: book1.extend(book2)       → print book1
+`,
+          test: (out) => out.includes("spell3") && out.includes("spell4"),
+          hint: "combined = book1 + book2; print(combined); book1.extend(book2); print(book1)",
+        },
+        {
+          title: "Level 9 — Loop the Cauldron",
+          goal: "Number the ingredients 1..N, print only those longer than 5 letters, then print total vowels count.",
+          example: `ings = ["flour","sugar"]
+for i, x in enumerate(ings, 1):
+    print(i, x)`,
+          starter: `ingredients = ["flour", "sugar", "cinnamon", "salt", "pepper"]
+
+# TODO 1: print numbered list (1. flour, 2. sugar, ...)
+# TODO 2: print only ingredients longer than 5 letters
+# TODO 3: print total vowel count across all ingredients
+`,
+          test: (out) =>
+            out.includes("cinnamon") &&
+            out.includes("pepper") &&
+            /\d/.test(out),
+          hint: "enumerate(ingredients, 1); 'for x in ingredients: if len(x) > 5: print(x)'; vowels = 'aeiou'",
+        },
+        {
+          title: "👑 Level 10 — BOSS FIGHT: Inventory Manager",
+          goal: "Demonstrate ALL 8 inventory actions: view, add, remove, search, sort, count, clear, and a final 'List Master!' message.",
+          example: `inv = ["potion", "sword", "shield"]
+inv.append("wand")
+inv.remove("sword")
+print("sword" in inv)
+inv.sort()
+print(len(inv))`,
+          starter: `inventory = ["potion", "sword", "shield"]
+
+# TODO: demonstrate ALL of these (print a label before each):
+# 1. View inventory
+# 2. Add "wand"
+# 3. Remove "sword"
+# 4. Search for "shield" (in)
+# 5. Sort inventory
+# 6. Count items (len)
+# 7. Clear inventory (.clear())
+# 8. Final print: "List Master!"
+`,
+          test: (out) => {
+            const o = out.toLowerCase();
+            return (
+              o.includes("wand") &&
+              o.includes("shield") &&
+              o.includes("list master")
+            );
+          },
+          hint: "Do each step in order, print labels. End with print('List Master!')",
+        },
+      ];
+
+      /* ============================================================
+   STATE
+   ============================================================ */
+      let pyodide = null;
+      let currentLevel = 0;
+      let completed = new Array(LEVELS.length).fill(false);
+
+      /* ============================================================
+   DOM
+   ============================================================ */
+      const $ = (id) => document.getElementById(id);
+      const levelListEl = $("levelList");
+      const taskTitleEl = $("taskTitle");
+      const taskGoalEl = $("taskGoal");
+      const taskExampleEl = $("taskExample");
+      const editorEl = $("editor");
+      const consoleEl = $("console");
+      const runBtn = $("runBtn");
+      const resetBtn = $("resetBtn");
+      const hintBtn = $("hintBtn");
+      const statusLine = $("statusLine");
+      const toastEl = $("toast");
+      const progressBar = $("progressBar");
+      const progressText = $("progressText");
+
+      /* ============================================================
+   UI HELPERS
+   ============================================================ */
+      function buildLevelList() {
+        levelListEl.innerHTML = "";
+        LEVELS.forEach((lvl, i) => {
+          const li = document.createElement("li");
+          const locked = i > 0 && !completed[i - 1];
+          li.className = locked ? "locked" : i === currentLevel ? "active" : "";
+          li.innerHTML = `<span>${lvl.title}</span><span class="star">${completed[i] ? "⭐" : ""}</span>`;
+          if (!locked) li.onclick = () => loadLevel(i);
+          levelListEl.appendChild(li);
+        });
+        const done = completed.filter(Boolean).length;
+        progressBar.style.width = (done / LEVELS.length) * 100 + "%";
+        progressText.textContent = `${done} / ${LEVELS.length} complete`;
+      }
+
+      function loadLevel(i) {
+        currentLevel = i;
+        const lvl = LEVELS[i];
+        taskTitleEl.textContent = lvl.title;
+        taskGoalEl.textContent = lvl.goal;
+        taskExampleEl.textContent = lvl.example;
+        editorEl.value = lvl.starter;
+        consoleEl.innerHTML = "";
+        log("▶ Loaded " + lvl.title, "gold");
+        buildLevelList();
+        saveState();
+      }
+
+      function log(msg, cls = "") {
+        const span = document.createElement("span");
+        span.className = cls;
+        span.textContent = msg + "\n";
+        consoleEl.appendChild(span);
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+      }
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        setTimeout(() => toastEl.classList.remove("show"), 2200);
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(
+            "pyquest-sis",
+            JSON.stringify({ completed, currentLevel }),
+          );
+        } catch (e) {}
+      }
+      function loadState() {
+        try {
+          const s = JSON.parse(localStorage.getItem("pyquest-sis") || "{}");
+          if (
+            Array.isArray(s.completed) &&
+            s.completed.length === LEVELS.length
+          ) {
+            completed = s.completed;
+          }
+          if (typeof s.currentLevel === "number") currentLevel = s.currentLevel;
+        } catch (e) {}
+      }
+
+      /* ============================================================
+   PYODIDE BOOT
+   ============================================================ */
+      async function bootPyodide() {
+        statusLine.textContent =
+          "Loading Python engine (first time can take ~10s)...";
+        try {
+          pyodide = await loadPyodide({
+            stdout: (text) => log(text, "ok"),
+            stderr: (text) => log(text, "err"),
+          });
+          statusLine.textContent = "✅ Python ready! Choose a level and run.";
+          runBtn.disabled = false;
+          loadLevel(currentLevel);
+          buildLevelList();
+        } catch (e) {
+          statusLine.textContent = "❌ Failed to load Python engine.";
+          console.error(e);
+        }
+      }
+
+      /* ============================================================
+   RUN CODE
+   ============================================================ */
+      let capturedOutput = "";
+
+      async function runCode() {
+        if (!pyodide) return;
+        consoleEl.innerHTML = "";
+        capturedOutput = "";
+
+        pyodide.setStdout({
+          batched: (msg) => {
+            capturedOutput += msg + "\n";
+            log(msg, "ok");
+          },
+        });
+        pyodide.setStderr({
+          batched: (msg) => {
+            capturedOutput += msg + "\n";
+            log(msg, "err");
+          },
+        });
+
+        const code = editorEl.value;
+        runBtn.disabled = true;
+        runBtn.textContent = "⏳ Running...";
+
+        try {
+          await pyodide.runPythonAsync(code);
+        } catch (err) {
+          log("❌ " + err.message, "err");
+          capturedOutput += err.message;
+        }
+
+        runBtn.disabled = false;
+        runBtn.textContent = "▶ Run Code";
+
+        const lvl = LEVELS[currentLevel];
+        let passed = false;
+        try {
+          passed = lvl.test(capturedOutput);
+        } catch (e) {
+          passed = false;
+        }
+
+        if (passed && !completed[currentLevel]) {
+          completed[currentLevel] = true;
+          log("\n⭐ LEVEL UP! You earned a star ⭐", "gold");
+          showToast("⭐ Level Complete!");
+          buildLevelList();
+          saveState();
+          if (completed.every(Boolean)) {
+            setTimeout(() => {
+              log(
+                "\n🎉🎉🎉 ALL LEVELS COMPLETE! You are a List Master! 🎉🎉🎉",
+                "gold",
+              );
+              showToast("👑 LIST MASTER!");
+            }, 300);
+          }
+        } else if (passed) {
+          log("\n✅ Already completed this level — great job!", "ok");
+        } else {
+          log("\n💡 Not quite — check the goal and try again.", "err");
+        }
+      }
+
+      /* ============================================================
+   BUTTONS
+   ============================================================ */
+      runBtn.onclick = runCode;
+
+      resetBtn.onclick = () => {
+        editorEl.value = LEVELS[currentLevel].starter;
+        consoleEl.innerHTML = "";
+      };
+
+      hintBtn.onclick = () => {
+        log("💡 Hint: " + LEVELS[currentLevel].hint, "gold");
+      };
+
+      editorEl.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+          e.preventDefault();
+          const start = editorEl.selectionStart;
+          editorEl.value =
+            editorEl.value.slice(0, start) +
+            "    " +
+            editorEl.value.slice(editorEl.selectionEnd);
+          editorEl.selectionStart = editorEl.selectionEnd = start + 4;
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          e.preventDefault();
+          runCode();
+        }
+      });
+
+      /* ============================================================
+   INIT
+   ============================================================ */
+      loadState();
+      buildLevelList();
+      bootPyodide();
+    </script>
+  </body>
+</html>
