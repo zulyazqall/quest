@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>⚽ Football Player List Master — SIS</title>
+<style>
+  /* ============================================================
+     SAPPORO INTERNATIONAL SCHOOL COLOR THEME
+     Green  #0B7B3E  — primary / success / buttons
+     Black  #010101  — background / depth
+     Red    #EE2649  — accent / errors / stars
+     ============================================================ */
+  :root {
+    --sis-green: #0B7B3E;
+    --sis-green-light: #14a855;
+    --sis-green-dark: #075a2c;
+    --sis-black: #010101;
+    --sis-black-soft: #0d0d0d;
+    --sis-black-panel: #141414;
+    --sis-red: #EE2649;
+    --sis-red-dark: #b81a37;
+    --text: #f4f4f4;
+    --muted: #a8a8a8;
+    --border: #262626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(900px 500px at 15% -10%, rgba(11,123,62,0.25), transparent 60%),
+      radial-gradient(700px 400px at 90% 110%, rgba(238,38,73,0.18), transparent 60%),
+      var(--sis-black);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    padding: 26px 16px 10px;
+    border-bottom: 2px solid var(--sis-green);
+    background: linear-gradient(180deg, rgba(11,123,62,0.15), transparent);
+  }
+  header h1 { margin: 0; font-size: 2rem; letter-spacing: 1px; color: #fff; }
+  header h1 .sis-green { color: var(--sis-green-light); }
+  header h1 .sis-red { color: var(--sis-red); }
+  header p { color: var(--muted); margin: 6px 0 0; font-size: .92rem; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr 380px;
+    gap: 16px;
+    padding: 16px;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: linear-gradient(180deg, var(--sis-black-panel), var(--sis-black-soft));
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--sis-green);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.6);
+  }
+  .panel h3 { color: var(--sis-green-light); margin-top: 0; }
+
+  .levels { list-style: none; padding: 0; margin: 0; }
+  .levels li {
+    padding: 10px 12px; margin-bottom: 8px; border-radius: 10px;
+    background: #0a0a0a; border: 1px solid var(--border);
+    border-left: 3px solid transparent; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: .18s; font-size: .88rem; color: var(--text);
+  }
+  .levels li:hover {
+    border-left-color: var(--sis-green); background: #0f0f0f; transform: translateX(2px);
+  }
+  .levels li.active {
+    border-left-color: var(--sis-red);
+    background: linear-gradient(90deg, rgba(11,123,62,0.18), transparent);
+    color: #fff;
+  }
+  .levels li.locked { opacity: .38; cursor: not-allowed; }
+  .levels li.locked:hover { transform: none; border-left-color: transparent; }
+  .star { color: var(--sis-red); text-shadow: 0 0 8px rgba(238,38,73,0.6); }
+
+  .task h2 { margin: 0 0 6px; font-size: 1.2rem; color: var(--sis-green-light); }
+  .task .goal { color: var(--muted); font-size: .92rem; margin-bottom: 10px; }
+  .task pre {
+    background: var(--sis-black); border: 1px solid var(--border);
+    border-left: 3px solid var(--sis-red); border-radius: 10px;
+    padding: 10px; overflow-x: auto; font-size: .85rem; color: #d8d8d8;
+  }
+  textarea {
+    width: 100%; min-height: 300px; background: var(--sis-black); color: #eaeaea;
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+    font-family: ui-monospace, Consolas, monospace; font-size: .9rem;
+    line-height: 1.4; resize: vertical; caret-color: var(--sis-green-light);
+  }
+  textarea:focus {
+    outline: none; border-color: var(--sis-green);
+    box-shadow: 0 0 0 2px rgba(11,123,62,0.3);
+  }
+
+  .controls { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  button {
+    background: linear-gradient(180deg, var(--sis-green-light), var(--sis-green));
+    color: #fff; border: none; padding: 10px 18px; border-radius: 10px;
+    font-weight: 700; cursor: pointer; font-size: .92rem;
+    transition: .15s; letter-spacing: .3px;
+  }
+  button:hover {
+    transform: translateY(-1px); filter: brightness(1.12);
+    box-shadow: 0 4px 14px rgba(11,123,62,0.5);
+  }
+  button.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  button.ghost:hover { border-color: var(--sis-red); color: var(--sis-red); box-shadow: 0 4px 14px rgba(238,38,73,0.25); }
+  button:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .console {
+    background: var(--sis-black); border: 1px solid var(--border);
+    border-left: 3px solid var(--sis-green); border-radius: 10px;
+    padding: 12px; height: 420px; overflow-y: auto;
+    font-family: ui-monospace, Consolas, monospace; font-size: .85rem;
+    white-space: pre-wrap; color: var(--sis-green-light);
+  }
+  .console .err { color: var(--sis-red); }
+  .console .ok { color: var(--sis-green-light); }
+  .console .gold { color: var(--sis-red); font-weight: 700; }
+
+  .toast {
+    position: fixed; top: 20px; right: 20px;
+    background: linear-gradient(180deg, var(--sis-green), var(--sis-green-dark));
+    border: 2px solid var(--sis-red); color: #fff;
+    padding: 14px 22px; border-radius: 12px; font-weight: 800;
+    opacity: 0; transform: translateY(-20px); transition: .4s;
+    pointer-events: none; z-index: 999;
+    box-shadow: 0 8px 30px rgba(238,38,73,0.4);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .progress {
+    height: 10px; background: var(--sis-black); border-radius: 8px;
+    overflow: hidden; margin-top: 8px; border: 1px solid var(--border);
+  }
+  .progress > div {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--sis-green), var(--sis-red));
+    transition: .4s; box-shadow: 0 0 10px rgba(238,38,73,0.5);
+  }
+  .hint { font-size: .82rem; color: var(--muted); margin-top: 8px; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--sis-black); }
+  ::-webkit-scrollbar-thumb { background: var(--sis-green); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--sis-red); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span class="sis-green">⚽ Football Player</span>
+    <span class="sis-red">·</span>
+    List Master
+  </h1>
+  <p>Sapporo International School · 10 Levels · Build your dream squad</p>
+</header>
+
+<div class="layout">
+  <aside class="panel">
+    <h3>🗺️ Level Map</h3>
+    <ul class="levels" id="levelList"></ul>
+    <div class="progress"><div id="progressBar"></div></div>
+    <p class="hint" id="progressText">0 / 10 complete</p>
+  </aside>
+
+  <main class="panel task">
+    <h2 id="taskTitle">Loading...</h2>
+    <div class="goal" id="taskGoal"></div>
+    <pre id="taskExample"></pre>
+    <textarea id="editor" spellcheck="false"></textarea>
+    <div class="controls">
+      <button id="runBtn" disabled>▶ Run Code</button>
+      <button class="ghost" id="resetBtn">↺ Reset</button>
+      <button class="ghost" id="hintBtn">💡 Hint</button>
+    </div>
+    <p class="hint" id="statusLine">Waiting for Python engine...</p>
+  </main>
+
+  <aside class="panel">
+    <h3>🖥️ Console</h3>
+    <div class="console" id="console"></div>
+  </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+<script>
+/* ============================================================
+   LEVEL DEFINITIONS — FOOTBALL PLAYER LIST MASTER
+   ============================================================ */
+const LEVELS = [
+  {
+    title: "Level 1 — Squad Announcement",
+    goal: "Create a list of 3 football players and print each one on its own line.",
+    example: `players = ["Messi", "Ronaldo", "Mbappe"]
+for p in players:
+    print(p)`,
+    starter: `players = ["Messi", "Ronaldo", "Mbappe"]
+
+# TODO: print each player on its own line
+`,
+    test: (out) =>
+      ["Messi", "Ronaldo", "Mbappe"].every((p) => out.includes(p)),
+    hint: "Use: for p in players: print(p)"
+  },
+  {
+    title: "Level 2 — Transfer Window",
+    goal: "Start with squad = ['Ronaldo']. Use append() to sign at least 2 more players, then print the squad.",
+    example: `squad = ["Ronaldo"]
+squad.append("Messi")
+print(squad)`,
+    starter: `squad = ["Ronaldo"]
+
+# TODO: append at least 2 more players, then print the squad
+`,
+    test: (out) => {
+      const m = out.match(/\[.*\]/);
+      return m && m[0].split(",").length >= 3;
+    },
+    hint: "squad.append(\"Messi\") then squad.append(\"Mbappe\") then print(squad)"
+  },
+  {
+    title: "Level 3 — Goals Counter",
+    goal: "Given scorers = ['Messi','Mbappe','Messi','Haaland','Messi'], print the total number of scorers AND how many goals Messi scored.",
+    example: `scorers = ["Messi", "Mbappe", "Messi"]
+print(len(scorers))         # total
+print(scorers.count("Messi"))  # Messi goals`,
+    starter: `scorers = ["Messi", "Mbappe", "Messi", "Haaland", "Messi"]
+
+# TODO: print total count, then count of "Messi"
+`,
+    test: (out) => out.includes("5") && out.includes("3"),
+    hint: "print(len(scorers)) and print(scorers.count(\"Messi\"))"
+  },
+  {
+    title: "Level 4 — Scouting Report",
+    goal: "Search for 'Haaland' in the squad. Print 'Found at INDEX' if present, else 'Not on the team'.",
+    example: `squad = ["Messi", "Haaland"]
+if "Haaland" in squad:
+    print("Found at", squad.index("Haaland"))`,
+    starter: `squad = ["Messi", "Ronaldo", "Haaland"]
+target = "Haaland"
+
+# TODO: check if target is in squad
+# if yes: print "Found at", index
+# if no:  print "Not on the team"
+`,
+    test: (out) => out.toLowerCase().includes("found"),
+    hint: "Use 'in' to check, then squad.index(target)."
+  },
+  {
+    title: "Level 5 — Red Card",
+    goal: "Given squad = ['Messi','Ronaldo','Neymar','Ronaldo'], remove 'Ronaldo' and pop the last player. Print the final squad.",
+    example: `squad = ["Messi", "Ronaldo"]
+squad.remove("Ronaldo")
+squad.pop()
+print(squad)`,
+    starter: `squad = ["Messi", "Ronaldo", "Neymar", "Ronaldo"]
+
+# TODO: remove "Ronaldo" (first one), then pop() the last player
+# print the final squad
+`,
+    test: (out) =>
+      out.includes("Messi") && out.includes("Neymar") && !out.includes("Ronaldo"),
+    hint: "squad.remove(\"Ronaldo\") then squad.pop() then print(squad)"
+  },
+  {
+    title: "Level 6 — Ranking the Squad",
+    goal: "Given players = ['Zidane','Beckham','Anderson','Maradona'], print the sorted list (A→Z), then print the reversed list.",
+    example: `p = ["Zlatan", "Beckham"]
+p.sort()
+print(p)
+p.reverse()
+print(p)`,
+    starter: `players = ["Zidane", "Beckham", "Anderson", "Maradona"]
+
+# TODO: sort(), print it, reverse(), print it again
+`,
+    test: (out) => {
+      const o = out.toLowerCase();
+      return o.includes("zidane") && o.includes("beckham") &&
+             o.includes("anderson") && o.includes("maradona");
+    },
+    hint: "players.sort(); print(players); players.reverse(); print(players)"
+  },
+  {
+    title: "Level 7 — Starting XI Slice",
+    goal: "Given 8 substitutes, print the first 3 (warming up), the last 2 (cooling down), and the middle 3 (index 2 to 5).",
+    example: `subs = ["A","B","C","D"]
+print(subs[:2])   # first 2
+print(subs[-2:])  # last 2
+print(subs[1:3])  # middle`,
+    starter: `subs = ["p1","p2","p3","p4","p5","p6","p7","p8"]
+
+# TODO: print subs[:3], subs[-2:], subs[2:5]
+`,
+    test: (out) =>
+      out.includes("p1") && out.includes("p7") && out.includes("p3"),
+    hint: "print(subs[:3]); print(subs[-2:]); print(subs[2:5])"
+  },
+  {
+    title: "Level 8 — Merge Two Clubs",
+    goal: "Combine teamA and teamB into a new list with '+', then extend teamA with teamB. Print both results.",
+    example: `a = ["Messi"]; b = ["Mbappe"]
+c = a + b
+a.extend(b)
+print(c); print(a)`,
+    starter: `teamA = ["Messi", "Neymar"]
+teamB = ["Mbappe", "Haaland"]
+
+# TODO: new_list = teamA + teamB → print it
+# TODO: teamA.extend(teamB)        → print teamA
+`,
+    test: (out) => out.includes("Mbappe") && out.includes("Haaland"),
+    hint: "combined = teamA + teamB; print(combined); teamA.extend(teamB); print(teamA)"
+  },
+  {
+    title: "Level 9 — Match Report Loop",
+    goal: "Given a list of players, print them numbered 1..N, print only players whose names are longer than 6 letters, then count total vowels across all names.",
+    example: `players = ["Messi","Haaland"]
+for i, p in enumerate(players, 1):
+    print(i, p)`,
+    starter: `players = ["Messi", "Haaland", "Mbappe", "Ronaldo", "Kane"]
+
+# TODO 1: print numbered list (1. Messi, 2. Haaland, ...)
+# TODO 2: print only names longer than 6 letters
+# TODO 3: print total vowel count across all names
+`,
+    test: (out) =>
+      out.includes("Haaland") && out.includes("Ronaldo") && /\d/.test(out),
+    hint: "enumerate(players, 1); 'for p in players: if len(p) > 6: print(p)'; vowels = 'aeiouAEIOU'"
+  },
+  {
+    title: "👑 Level 10 — BOSS FIGHT: Transfer Manager",
+    goal: "Demonstrate ALL 8 squad actions: view, add, remove, search, sort, count, clear, and end with 'Football List Master!'",
+    example: `squad = ["Messi", "Ronaldo", "Neymar"]
+squad.append("Mbappe")
+squad.remove("Neymar")
+print("Messi" in squad)
+squad.sort()
+print(len(squad))`,
+    starter: `squad = ["Messi", "Ronaldo", "Neymar"]
+
+# TODO: demonstrate ALL of these (print a label before each):
+# 1. View squad
+# 2. Add "Mbappe"
+# 3. Remove "Neymar"
+# 4. Search for "Messi" (use in)
+# 5. Sort squad
+# 6. Count players (len)
+# 7. Clear squad (.clear())
+# 8. Final print: "Football List Master!"
+`,
+    test: (out) => {
+      const o = out.toLowerCase();
+      return o.includes("mbappe") && o.includes("messi") &&
+             o.includes("football list master");
+    },
+    hint: "Do each step in order, print labels. End with print('Football List Master!')"
+  }
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let pyodide = null;
+let currentLevel = 0;
+let completed = new Array(LEVELS.length).fill(false);
+
+/* ============================================================
+   DOM
+   ============================================================ */
+const $ = (id) => document.getElementById(id);
+const levelListEl = $("levelList");
+const taskTitleEl = $("taskTitle");
+const taskGoalEl = $("taskGoal");
+const taskExampleEl = $("taskExample");
+const editorEl = $("editor");
+const consoleEl = $("console");
+const runBtn = $("runBtn");
+const resetBtn = $("resetBtn");
+const hintBtn = $("hintBtn");
+const statusLine = $("statusLine");
+const toastEl = $("toast");
+const progressBar = $("progressBar");
+const progressText = $("progressText");
+
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+function buildLevelList() {
+  levelListEl.innerHTML = "";
+  LEVELS.forEach((lvl, i) => {
+    const li = document.createElement("li");
+    const locked = i > 0 && !completed[i - 1];
+    li.className = locked ? "locked" : (i === currentLevel ? "active" : "");
+    li.innerHTML = `<span>${lvl.title}</span><span class="star">${completed[i] ? "⭐" : ""}</span>`;
+    if (!locked) li.onclick = () => loadLevel(i);
+    levelListEl.appendChild(li);
+  });
+  const done = completed.filter(Boolean).length;
+  progressBar.style.width = (done / LEVELS.length) * 100 + "%";
+  progressText.textContent = `${done} / ${LEVELS.length} complete`;
+}
+
+function loadLevel(i) {
+  currentLevel = i;
+  const lvl = LEVELS[i];
+  taskTitleEl.textContent = lvl.title;
+  taskGoalEl.textContent = lvl.goal;
+  taskExampleEl.textContent = lvl.example;
+  editorEl.value = lvl.starter;
+  consoleEl.innerHTML = "";
+  log("▶ Loaded " + lvl.title, "gold");
+  buildLevelList();
+  saveState();
+}
+
+function log(msg, cls = "") {
+  const span = document.createElement("span");
+  span.className = cls;
+  span.textContent = msg + "\n";
+  consoleEl.appendChild(span);
+  consoleEl.scrollTop = consoleEl.scrollHeight;
+}
+
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  setTimeout(() => toastEl.classList.remove("show"), 2200);
+}
+
+function saveState() {
+  try {
+    localStorage.setItem("footballquest-sis", JSON.stringify({ completed, currentLevel }));
+  } catch (e) {}
+}
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem("footballquest-sis") || "{}");
+    if (Array.isArray(s.completed) && s.completed.length === LEVELS.length) {
+      completed = s.completed;
+    }
+    if (typeof s.currentLevel === "number") currentLevel = s.currentLevel;
+  } catch (e) {}
+}
+
+/* ============================================================
+   PYODIDE BOOT
+   ============================================================ */
+async function bootPyodide() {
+  statusLine.textContent = "Loading Python engine (first time can take ~10s)...";
+  try {
+    pyodide = await loadPyodide({
+      stdout: (text) => log(text, "ok"),
+      stderr: (text) => log(text, "err")
+    });
+    statusLine.textContent = "✅ Python ready! Pick a level and build your squad.";
+    runBtn.disabled = false;
+    loadLevel(currentLevel);
+    buildLevelList();
+  } catch (e) {
+    statusLine.textContent = "❌ Failed to load Python engine.";
+    console.error(e);
+  }
+}
+
+/* ============================================================
+   RUN CODE
+   ============================================================ */
+let capturedOutput = "";
+
+async function runCode() {
+  if (!pyodide) return;
+  consoleEl.innerHTML = "";
+  capturedOutput = "";
+
+  pyodide.setStdout({
+    batched: (msg) => {
+      capturedOutput += msg + "\n";
+      log(msg, "ok");
+    }
+  });
+  pyodide.setStderr({
+    batched: (msg) => {
+      capturedOutput += msg + "\n";
+      log(msg, "err");
+    }
+  });
+
+  const code = editorEl.value;
+  runBtn.disabled = true;
+  runBtn.textContent = "⏳ Running...";
+
+  try {
+    await pyodide.runPythonAsync(code);
+  } catch (err) {
+    log("❌ " + err.message, "err");
+    capturedOutput += err.message;
+  }
+
+  runBtn.disabled = false;
+  runBtn.textContent = "▶ Run Code";
+
+  const lvl = LEVELS[currentLevel];
+  let passed = false;
+  try { passed = lvl.test(capturedOutput); } catch (e) { passed = false; }
+
+  if (passed && !completed[currentLevel]) {
+    completed[currentLevel] = true;
+    log("\n⭐ LEVEL UP! You earned a star ⭐", "gold");
+    showToast("⭐ Level Complete!");
+    buildLevelList();
+    saveState();
+    if (completed.every(Boolean)) {
+      setTimeout(() => {
+        log("\n🎉🎉🎉 ALL LEVELS COMPLETE! Football List Master! 🎉🎉🎉", "gold");
+        showToast("👑 FOOTBALL LIST MASTER!");
+      }, 300);
+    }
+  } else if (passed) {
+    log("\n✅ Already completed this level — great job!", "ok");
+  } else {
+    log("\n💡 Not quite — check the goal and try again.", "err");
+  }
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+runBtn.onclick = runCode;
+resetBtn.onclick = () => {
+  editorEl.value = LEVELS[currentLevel].starter;
+  consoleEl.innerHTML = "";
+};
+hintBtn.onclick = () => log("💡 Hint: " + LEVELS[currentLevel].hint, "gold");
+
+editorEl.addEventListener("keydown", (e) => {
+  if (e.key === "Tab") {
+    e.preventDefault();
+    const start = editorEl.selectionStart;
+    editorEl.value =
+      editorEl.value.slice(0, start) + "    " + editorEl.value.slice(editorEl.selectionEnd);
+    editorEl.selectionStart = editorEl.selectionEnd = start + 4;
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+    e.preventDefault();
+    runCode();
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadState();
+buildLevelList();
+bootPyodide();
+</script>
+</body>
+</html>
