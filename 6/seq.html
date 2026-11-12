@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequencing & Sorting · 10-Question Quest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== SCRATCH COLOR PALETTE ===== */
+        :root {
+            --scratch-motion: #4C97FF;
+            --scratch-motion-dark: #3373CC;
+            --scratch-looks: #9966FF;
+            --scratch-looks-dark: #774DCB;
+            --scratch-sound: #CF63CF;
+            --scratch-sound-dark: #BD42BD;
+            --scratch-events: #FFBF00;
+            --scratch-events-dark: #CC9900;
+            --scratch-control: #FFAB19;
+            --scratch-control-dark: #CF8B17;
+            --scratch-sensing: #5CB1D6;
+            --scratch-sensing-dark: #2E8EB8;
+            --scratch-operators: #59C059;
+            --scratch-operators-dark: #389438;
+            --scratch-variables: #FF8C1A;
+            --scratch-myblocks: #FF6680;
+            --scratch-myblocks-dark: #FF3355;
+            --scratch-bg: #E6F2FF;
+            --scratch-panel: #F9F9F9;
+            --scratch-border: #D9D9D9;
+            --scratch-text: #575E75;
+            --scratch-text-light: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', 'Segoe UI', 'Poppins', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--scratch-bg);
+            color: var(--scratch-text);
+            padding: 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--scratch-panel);
+            border-radius: 1.5rem;
+            padding: 2rem 2rem 2.5rem;
+            border: 3px solid var(--scratch-motion);
+            box-shadow: 0 12px 30px rgba(76, 151, 255, 0.15);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 3px solid var(--scratch-motion);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand i {
+            font-size: 2.4rem;
+            color: var(--scratch-text-light);
+            background: var(--scratch-motion);
+            padding: 0.5rem;
+            border-radius: 1rem;
+            border: 2px solid var(--scratch-control);
+        }
+
+        .brand h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--scratch-text);
+        }
+
+        .brand h1 span {
+            color: var(--scratch-motion);
+        }
+
+        .brand p {
+            color: var(--scratch-text-light);
+            background: var(--scratch-looks);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+
+        .score-tracker {
+            background: var(--scratch-text-light);
+            border: 2px solid var(--scratch-motion);
+            border-radius: 40px;
+            padding: 0.6rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 4px 0 var(--scratch-motion-dark);
+        }
+
+        .score-tracker i {
+            color: var(--scratch-events);
+            font-size: 1.5rem;
+        }
+
+        .score-tracker .points {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--scratch-motion);
+        }
+
+        /* Progress */
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--scratch-text);
+        }
+
+        .progress-bar {
+            height: 14px;
+            background: var(--scratch-text-light);
+            border-radius: 20px;
+            border: 2px solid var(--scratch-border);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--scratch-operators), var(--scratch-motion));
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        /* Question card */
+        .question-card {
+            background: var(--scratch-text-light);
+            border-radius: 1.2rem;
+            padding: 2rem;
+            border: 2px solid var(--scratch-border);
+            box-shadow: 0 5px 0 var(--scratch-border);
+            margin-bottom: 1.5rem;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .question-number {
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--scratch-motion);
+            background: var(--scratch-bg);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            border: 2px solid var(--scratch-motion);
+        }
+
+        .question-type {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.35rem 0.9rem;
+            border-radius: 40px;
+            color: white;
+        }
+
+        .question-type.sequence { background: var(--scratch-motion); }
+        .question-type.sorting { background: var(--scratch-looks); }
+        .question-type.debug { background: var(--scratch-myblocks); }
+        .question-type.loop { background: var(--scratch-control); color: var(--scratch-text); }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--scratch-text);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-hint {
+            font-size: 0.85rem;
+            color: #8A8FA3;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .question-hint i {
+            color: var(--scratch-events);
+        }
+
+        /* Answer options */
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            flex: 1;
+        }
+
+        .answer-btn {
+            background: var(--scratch-bg);
+            border: 2px solid var(--scratch-border);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--scratch-text);
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: 0.15s ease;
+        }
+
+        .answer-btn:hover {
+            border-color: var(--scratch-motion);
+            background: #D6E9FF;
+            transform: translateX(3px);
+        }
+
+        .answer-btn .option-letter {
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 50%;
+            background: var(--scratch-text-light);
+            border: 2px solid var(--scratch-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .answer-btn.correct {
+            background: #E6F9E6;
+            border-color: var(--scratch-operators);
+            color: var(--scratch-operators-dark);
+        }
+
+        .answer-btn.correct .option-letter {
+            background: var(--scratch-operators);
+            color: white;
+            border-color: var(--scratch-operators-dark);
+        }
+
+        .answer-btn.wrong {
+            background: #FFEEF0;
+            border-color: var(--scratch-myblocks);
+            color: var(--scratch-myblocks-dark);
+        }
+
+        .answer-btn.wrong .option-letter {
+            background: var(--scratch-myblocks);
+            color: white;
+            border-color: var(--scratch-myblocks-dark);
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .feedback.show { display: flex; }
+        .feedback.success { background: #E6F9E6; color: var(--scratch-operators-dark); border: 2px solid var(--scratch-operators); }
+        .feedback.error { background: #FFEEF0; color: var(--scratch-myblocks-dark); border: 2px solid var(--scratch-myblocks); }
+
+        /* Action row */
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 2px solid;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: 0.1s ease;
+        }
+
+        .btn-next {
+            background: var(--scratch-motion);
+            border-color: var(--scratch-motion-dark);
+            color: white;
+            box-shadow: 0 3px 0 var(--scratch-motion-dark);
+        }
+
+        .btn-next:hover { background: #6BA8FF; transform: translateY(-1px); }
+        .btn-next:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--scratch-motion-dark); }
+        .btn-next:disabled { background: #CCC; border-color: #AAA; box-shadow: 0 3px 0 #AAA; cursor: not-allowed; color: #777; }
+
+        .btn-restart {
+            background: var(--scratch-text-light);
+            border-color: var(--scratch-looks);
+            color: var(--scratch-looks);
+            box-shadow: 0 3px 0 var(--scratch-looks);
+        }
+
+        .btn-restart:hover { background: #F3EDFF; transform: translateY(-1px); }
+
+        /* Results screen */
+        .results-screen {
+            display: none;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .results-screen.show { display: block; }
+
+        .results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--scratch-events);
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .results-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--scratch-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .results-subtitle {
+            font-size: 1rem;
+            color: #7A8A9E;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-score {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--scratch-motion);
+            margin-bottom: 0.3rem;
+        }
+
+        .results-score span {
+            font-size: 1.2rem;
+            color: #8A8FA3;
+            font-weight: 700;
+        }
+
+        .results-message {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--scratch-operators-dark);
+            background: #E6F9E6;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 2rem;
+            border: 2px solid var(--scratch-operators);
+        }
+
+        .results-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .breakdown-item {
+            background: var(--scratch-text-light);
+            border: 2px solid var(--scratch-border);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 3px 0 var(--scratch-border);
+        }
+
+        .breakdown-item .bd-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8A8FA3;
+            margin-bottom: 0.3rem;
+        }
+
+        .breakdown-item .bd-value {
+            font-size: 1.4rem;
+            font-weight: 900;
+        }
+
+        .breakdown-item .bd-value.good { color: var(--scratch-operators); }
+        .breakdown-item .bd-value.miss { color: var(--scratch-myblocks); }
+
+        /* Points pop */
+        .points-pop {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--scratch-events);
+            color: var(--scratch-text);
+            font-weight: 900;
+            padding: 1rem 2.5rem;
+            border-radius: 60px;
+            font-size: 1.8rem;
+            border: 3px solid var(--scratch-control-dark);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 2000;
+            animation: pop 0.3s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: translateX(-50%) scale(0.8); opacity: 0; }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #8A8FA3;
+            border-top: 2px solid var(--scratch-motion);
+            padding-top: 1.5rem;
+        }
+
+        .footer-note span {
+            color: var(--scratch-motion);
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .question-text { font-size: 1rem; }
+            .brand h1 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                <i class="fas fa-sort-amount-down"></i>
+                <div>
+                    <h1>SEQUENCING & <span>SORTING</span> QUIZ</h1>
+                    <p>GRADE 6 · 10-QUESTION CHALLENGE</p>
+                </div>
+            </div>
+            <div class="score-tracker">
+                <i class="fas fa-star"></i>
+                <span class="points" id="pointsDisplay">0</span>
+                <span style="color:#8A8FA3;">/ 100 pts</span>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span><i class="fas fa-flag-checkered" style="color:var(--scratch-motion)"></i> Quiz Progress</span>
+                <span id="progressText">Question 1 of 10</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Question area -->
+        <div id="questionArea">
+            <div class="question-card">
+                <div class="question-meta">
+                    <span class="question-number" id="qNumber">Question 1</span>
+                    <span class="question-type sequence" id="qType">Sequencing</span>
+                </div>
+                <div class="question-text" id="qText">Loading question...</div>
+                <div class="question-hint" id="qHint"><i class="fas fa-lightbulb"></i> <span id="qHintText"></span></div>
+                <div class="answers" id="answersContainer"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="action-row">
+                <button class="btn btn-restart" id="restartBtn"><i class="fas fa-redo"></i> Restart Quiz</button>
+                <button class="btn btn-next" id="nextBtn" disabled><i class="fas fa-arrow-right"></i> Next Question</button>
+            </div>
+        </div>
+
+        <!-- Results screen -->
+        <div class="results-screen" id="resultsScreen">
+            <div class="results-icon"><i class="fas fa-trophy"></i></div>
+            <div class="results-title">Quiz Complete!</div>
+            <div class="results-subtitle">Here's how you did on the Sequencing & Sorting Challenge</div>
+            <div class="results-score" id="resultsScore">0 <span>/ 100</span></div>
+            <div class="results-message" id="resultsMessage">Great effort!</div>
+
+            <div class="results-breakdown">
+                <div class="breakdown-item">
+                    <div class="bd-label"><i class="fas fa-check-circle" style="color:var(--scratch-operators)"></i> Correct</div>
+                    <div class="bd-value good" id="bdCorrect">0</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="bd-label"><i class="fas fa-times-circle" style="color:var(--scratch-myblocks)"></i> Incorrect</div>
+                    <div class="bd-value miss" id="bdIncorrect">0</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="bd-label"><i class="fas fa-percentage" style="color:var(--scratch-motion)"></i> Accuracy</div>
+                    <div class="bd-value" id="bdAccuracy" style="color:var(--scratch-motion);">0%</div>
+                </div>
+            </div>
+
+            <button class="btn btn-next" id="playAgainBtn"><i class="fas fa-redo"></i> Play Again</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-note">
+            <span>Sapporo International School</span> · Unit 3: Algorithms & Programs · Sequencing & Sorting Quiz
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- 10 QUESTIONS ----------
+            const questions = [
+                // 1 - Sequencing
+                {
+                    type: 'sequence',
+                    typeLabel: 'Sequencing',
+                    text: 'What is the correct order to make a cup of tea?',
+                    hint: 'Think: what must happen before you can stir?',
+                    options: [
+                        'Boil water → Put tea bag in cup → Pour water → Stir → Remove tea bag',
+                        'Put tea bag in cup → Stir → Boil water → Pour water → Remove tea bag',
+                        'Boil water → Stir → Put tea bag in cup → Pour water → Remove tea bag',
+                        'Pour water → Boil water → Put tea bag in cup → Stir → Remove tea bag'
+                    ],
+                    correct: 0,
+                    explanation: 'You must boil water first, then add the tea bag, pour the water, stir, and finally remove the bag.'
+                },
+                // 2 - Sorting
+                {
+                    type: 'sorting',
+                    typeLabel: 'Sorting',
+                    text: 'Which list shows the numbers sorted from smallest to largest: 34, 7, 89, 12, 56?',
+                    hint: 'Find the smallest number first, then the next smallest...',
+                    options: [
+                        '7, 12, 34, 56, 89',
+                        '89, 56, 34, 12, 7',
+                        '34, 7, 12, 56, 89',
+                        '7, 34, 12, 56, 89'
+                    ],
+                    correct: 0,
+                    explanation: 'Ascending order means smallest to largest: 7 → 12 → 34 → 56 → 89.'
+                },
+                // 3 - Sequencing
+                {
+                    type: 'sequence',
+                    typeLabel: 'Sequencing',
+                    text: 'In a Scratch program, which block must come FIRST?',
+                    hint: 'Every script needs a starting event.',
+                    options: [
+                        'when flag clicked',
+                        'move 10 steps',
+                        'repeat 4',
+                        'say "Hello!"'
+                    ],
+                    correct: 0,
+                    explanation: 'The "when flag clicked" event block starts the script. Everything else runs after it.'
+                },
+                // 4 - Debug
+                {
+                    type: 'debug',
+                    typeLabel: 'Debugging',
+                    text: 'A program to draw a square is: repeat 4 [move 50, turn 90]. What happens if you change it to "repeat 3"?',
+                    hint: 'How many sides does a square have?',
+                    options: [
+                        'It draws a triangle instead of a square',
+                        'It draws a square but smaller',
+                        'It draws nothing',
+                        'It draws a circle'
+                    ],
+                    correct: 0,
+                    explanation: 'A square has 4 sides. Repeating only 3 times draws a triangle (3 sides).'
+                },
+                // 5 - Sorting
+                {
+                    type: 'sorting',
+                    typeLabel: 'Sorting',
+                    text: 'Sort these words alphabetically: apple, banana, cherry, date. Which is correct?',
+                    hint: 'Alphabetical order starts with A, then B, then C...',
+                    options: [
+                        'apple, banana, cherry, date',
+                        'banana, apple, date, cherry',
+                        'cherry, banana, apple, date',
+                        'date, cherry, banana, apple'
+                    ],
+                    correct: 0,
+                    explanation: 'A comes before B, B before C, C before D: apple → banana → cherry → date.'
+                },
+                // 6 - Sequencing
+                {
+                    type: 'sequence',
+                    typeLabel: 'Sequencing',
+                    text: 'What is the correct sequence to open a file on a computer?',
+                    hint: 'You need to turn on the computer before you can find a file.',
+                    options: [
+                        'Turn on computer → Open file explorer → Find the file → Double-click the file',
+                        'Double-click the file → Turn on computer → Open file explorer → Find the file',
+                        'Find the file → Turn on computer → Double-click the file → Open file explorer',
+                        'Open file explorer → Turn on computer → Find the file → Double-click the file'
+                    ],
+                    correct: 0,
+                    explanation: 'First power on, then navigate to the file, and finally open it by double-clicking.'
+                },
+                // 7 - Debug
+                {
+                    type: 'debug',
+                    typeLabel: 'Debugging',
+                    text: 'The steps to log into an email are out of order: "Enter password → Open browser → Click login → Type username". What is the FIRST step?',
+                    hint: 'You need a browser before you can see a login page.',
+                    options: [
+                        'Open browser',
+                        'Enter password',
+                        'Click login',
+                        'Type username'
+                    ],
+                    correct: 0,
+                    explanation: 'You must open the browser first to reach the login page.'
+                },
+                // 8 - Sorting
+                {
+                    type: 'sorting',
+                    typeLabel: 'Sorting',
+                    text: 'Which sorting algorithm swaps adjacent items repeatedly until the list is ordered?',
+                    hint: 'Think of bubbles rising to the top.',
+                    options: [
+                        'Bubble sort',
+                        'Quick sort',
+                        'Merge sort',
+                        'Binary sort'
+                    ],
+                    correct: 0,
+                    explanation: 'Bubble sort compares and swaps adjacent items, "bubbling" the largest to the end.'
+                },
+                // 9 - Loop
+                {
+                    type: 'loop',
+                    typeLabel: 'Repetition',
+                    text: 'What does the "repeat 4 [move 50, turn 90]" block draw?',
+                    hint: '4 sides, 90° turns — what shape is that?',
+                    options: [
+                        'A square',
+                        'A triangle',
+                        'A circle',
+                        'A straight line'
+                    ],
+                    correct: 0,
+                    explanation: 'Four equal sides with 90° turns make a square.'
+                },
+                // 10 - Sequencing
+                {
+                    type: 'sequence',
+                    typeLabel: 'Sequencing',
+                    text: 'What is the correct order of the "morning routine" algorithm?',
+                    hint: 'Wake up first, then get ready, then leave.',
+                    options: [
+                        'Wake up → Brush teeth → Get dressed → Eat breakfast → Go to school',
+                        'Eat breakfast → Wake up → Brush teeth → Get dressed → Go to school',
+                        'Get dressed → Wake up → Eat breakfast → Brush teeth → Go to school',
+                        'Wake up → Eat breakfast → Go to school → Brush teeth → Get dressed'
+                    ],
+                    correct: 0,
+                    explanation: 'A logical morning sequence: wake up, brush teeth, get dressed, eat, then go to school.'
+                }
+            ];
+
+            // ---------- STATE ----------
+            let currentQuestion = 0;
+            let score = 0;
+            let correctCount = 0;
+            let incorrectCount = 0;
+            let answered = false;
+
+            // ---------- DOM ----------
+            const pointsDisplay = document.getElementById('pointsDisplay');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const qNumber = document.getElementById('qNumber');
+            const qType = document.getElementById('qType');
+            const qText = document.getElementById('qText');
+            const qHintText = document.getElementById('qHintText');
+            const answersContainer = document.getElementById('answersContainer');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('nextBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const questionArea = document.getElementById('questionArea');
+            const resultsScreen = document.getElementById('resultsScreen');
+            const resultsScore = document.getElementById('resultsScore');
+            const resultsMessage = document.getElementById('resultsMessage');
+            const bdCorrect = document.getElementById('bdCorrect');
+            const bdIncorrect = document.getElementById('bdIncorrect');
+            const bdAccuracy = document.getElementById('bdAccuracy');
+            const playAgainBtn = document.getElementById('playAgainBtn');
+
+            // ---------- RENDER QUESTION ----------
+            function renderQuestion() {
+                if (currentQuestion >= questions.length) {
+                    showResults();
+                    return;
+                }
+
+                answered = false;
+                nextBtn.disabled = true;
+                feedback.className = 'feedback';
+                feedback.innerHTML = '';
+
+                const q = questions[currentQuestion];
+
+                // Update meta
+                qNumber.textContent = `Question ${currentQuestion + 1}`;
+                qType.textContent = q.typeLabel;
+                qType.className = `question-type ${q.type}`;
+
+                // Progress
+                const pct = ((currentQuestion) / questions.length) * 100;
+                progressFill.style.width = pct + '%';
+                progressText.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+
+                // Question text
+                qText.textContent = q.text;
+                qHintText.textContent = q.hint;
+
+                // Answers
+                answersContainer.innerHTML = '';
+                const letters = ['A', 'B', 'C', 'D'];
+                q.options.forEach((option, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'answer-btn';
+                    btn.innerHTML = `<span class="option-letter">${letters[index]}</span> <span>${option}</span>`;
+                    btn.addEventListener('click', () => selectAnswer(index, q));
+                    answersContainer.appendChild(btn);
+                });
+            }
+
+            // ---------- SELECT ANSWER ----------
+            function selectAnswer(index, q) {
+                if (answered) return;
+                answered = true;
+
+                const buttons = answersContainer.querySelectorAll('.answer-btn');
+                const isCorrect = index === q.correct;
+
+                // Disable all buttons
+                buttons.forEach(btn => btn.disabled = true);
+
+                // Mark selected
+                buttons[index].classList.add(isCorrect ? 'correct' : 'wrong');
+
+                // If wrong, highlight correct answer
+                if (!isCorrect) {
+                    buttons[q.correct].classList.add('correct');
+                }
+
+                // Update feedback
+                feedback.className = `feedback show ${isCorrect ? 'success' : 'error'}`;
+                feedback.innerHTML = isCorrect
+                    ? `<i class="fas fa-check-circle"></i> <strong>Correct!</strong> ${q.explanation}`
+                    : `<i class="fas fa-times-circle"></i> <strong>Not quite.</strong> ${q.explanation}`;
+
+                // Update score
+                if (isCorrect) {
+                    score += 10;
+                    correctCount++;
+                    showPointsPopup(10);
+                } else {
+                    incorrectCount++;
+                }
+
+                pointsDisplay.textContent = score;
+                nextBtn.disabled = false;
+
+                // Update progress bar to include this question
+                const pct = ((currentQuestion + 1) / questions.length) * 100;
+                progressFill.style.width = pct + '%';
+            }
+
+            // ---------- NEXT QUESTION ----------
+            nextBtn.addEventListener('click', function() {
+                currentQuestion++;
+                if (currentQuestion >= questions.length) {
+                    showResults();
+                } else {
+                    renderQuestion();
+                }
+            });
+
+            // ---------- SHOW RESULTS ----------
+            function showResults() {
+                questionArea.style.display = 'none';
+                resultsScreen.classList.add('show');
+
+                resultsScore.innerHTML = `${score} <span>/ 100</span>`;
+                bdCorrect.textContent = correctCount;
+                bdIncorrect.textContent = incorrectCount;
+                const accuracy = Math.round((correctCount / questions.length) * 100);
+                bdAccuracy.textContent = accuracy + '%';
+
+                // Progress full
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Quiz Complete!';
+
+                // Message based on score
+                if (score === 100) {
+                    resultsMessage.textContent = '🏆 Perfect score! You are a Sequencing & Sorting Master!';
+                } else if (score >= 80) {
+                    resultsMessage.textContent = '🌟 Excellent work! You really know your algorithms!';
+                } else if (score >= 60) {
+                    resultsMessage.textContent = '👍 Good job! Review the explanations to improve further.';
+                } else if (score >= 40) {
+                    resultsMessage.textContent = '📚 Keep practising! Try the quiz again to boost your score.';
+                } else {
+                    resultsMessage.textContent = '💪 Don\'t give up! Review sequencing and sorting, then try again.';
+                }
+            }
+
+            // ---------- POINTS POPUP ----------
+            function showPointsPopup(amount) {
+                const popup = document.createElement('div');
+                popup.className = 'points-pop';
+                popup.textContent = `+${amount} pts!`;
+                document.body.appendChild(popup);
+                setTimeout(() => popup.remove(), 800);
+            }
+
+            // ---------- RESTART ----------
+            function restartQuiz() {
+                currentQuestion = 0;
+                score = 0;
+                correctCount = 0;
+                incorrectCount = 0;
+                answered = false;
+                pointsDisplay.textContent = '0';
+                questionArea.style.display = 'block';
+                resultsScreen.classList.remove('show');
+                renderQuestion();
+            }
+
+            restartBtn.addEventListener('click', restartQuiz);
+            playAgainBtn.addEventListener('click', restartQuiz);
+
+            // ---------- INIT ----------
+            renderQuestion();
+        })();
+    </script>
+</body>
+</html>
