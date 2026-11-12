@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequencing & Sorting Quest · Scratch Theme</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== SCRATCH OFFICIAL COLOR PALETTE ===== */
+        :root {
+            --scratch-motion: #4C97FF;
+            --scratch-motion-dark: #3373CC;
+            --scratch-looks: #9966FF;
+            --scratch-looks-dark: #774DCB;
+            --scratch-sound: #CF63CF;
+            --scratch-sound-dark: #BD42BD;
+            --scratch-events: #FFBF00;
+            --scratch-events-dark: #CC9900;
+            --scratch-control: #FFAB19;
+            --scratch-control-dark: #CF8B17;
+            --scratch-sensing: #5CB1D6;
+            --scratch-sensing-dark: #2E8EB8;
+            --scratch-operators: #59C059;
+            --scratch-operators-dark: #389438;
+            --scratch-variables: #FF8C1A;
+            --scratch-myblocks: #FF6680;
+            --scratch-myblocks-dark: #FF3355;
+            --scratch-bg: #E6F2FF;
+            --scratch-panel: #F9F9F9;
+            --scratch-border: #D9D9D9;
+            --scratch-text: #575E75;
+            --scratch-text-light: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', 'Segoe UI', 'Poppins', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--scratch-bg);
+            color: var(--scratch-text);
+            padding: 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quest-container {
+            max-width: 1100px;
+            width: 100%;
+            background: var(--scratch-panel);
+            border-radius: 1.5rem;
+            padding: 2rem 2rem 2.5rem;
+            border: 3px solid var(--scratch-motion);
+            box-shadow: 0 12px 30px rgba(76, 151, 255, 0.15);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 3px solid var(--scratch-motion);
+        }
+
+        .school-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .school-brand i {
+            font-size: 2.8rem;
+            color: var(--scratch-text-light);
+            background: var(--scratch-motion);
+            padding: 0.5rem;
+            border-radius: 1rem;
+            border: 2px solid var(--scratch-control);
+        }
+
+        .school-brand h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--scratch-text);
+        }
+
+        .school-brand h1 span {
+            color: var(--scratch-motion);
+        }
+
+        .school-brand p {
+            color: var(--scratch-text-light);
+            background: var(--scratch-motion);
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+
+        .score-tracker {
+            background: var(--scratch-text-light);
+            border: 2px solid var(--scratch-motion);
+            border-radius: 40px;
+            padding: 0.6rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 4px 0 var(--scratch-motion-dark);
+        }
+
+        .score-tracker i {
+            color: var(--scratch-events);
+            font-size: 1.5rem;
+        }
+
+        .score-tracker .points {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--scratch-motion);
+        }
+
+        /* Progress bar */
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--scratch-text);
+        }
+
+        .progress-bar {
+            height: 14px;
+            background: var(--scratch-text-light);
+            border-radius: 20px;
+            border: 2px solid var(--scratch-border);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--scratch-operators), var(--scratch-motion));
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        /* Activity cards */
+        .activities {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .activity-card {
+            background: var(--scratch-text-light);
+            border-radius: 1.2rem;
+            padding: 1.8rem;
+            border: 2px solid var(--scratch-border);
+            box-shadow: 0 5px 0 var(--scratch-border);
+            transition: 0.2s ease;
+        }
+
+        .activity-card.completed {
+            border-color: var(--scratch-operators);
+            box-shadow: 0 5px 0 var(--scratch-operators-dark);
+            background: #F5FFF5;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .activity-icon {
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.sequence { background: var(--scratch-motion); border: 2px solid var(--scratch-motion-dark); }
+        .activity-icon.sorting { background: var(--scratch-looks); border: 2px solid var(--scratch-looks-dark); }
+        .activity-icon.loop { background: var(--scratch-control); border: 2px solid var(--scratch-control-dark); color: var(--scratch-text); }
+        .activity-icon.debug { background: var(--scratch-myblocks); border: 2px solid var(--scratch-myblocks-dark); }
+
+        .activity-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--scratch-text);
+        }
+
+        .activity-subtitle {
+            font-size: 0.82rem;
+            color: #7A8A9E;
+            font-weight: 500;
+        }
+
+        .activity-desc {
+            font-size: 0.9rem;
+            color: #6e7385;
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
+        }
+
+        /* Drag & drop game area */
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 700px) {
+            .game-area { grid-template-columns: 1fr; }
+        }
+
+        .pool {
+            background: var(--scratch-bg);
+            border: 2px dashed var(--scratch-motion);
+            border-radius: 1rem;
+            padding: 1rem;
+            min-height: 120px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-content: flex-start;
+        }
+
+        .pool-title {
+            width: 100%;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--scratch-motion);
+            margin-bottom: 0.5rem;
+        }
+
+        .dropzone {
+            background: var(--scratch-text-light);
+            border: 2px dashed var(--scratch-operators);
+            border-radius: 1rem;
+            padding: 1rem;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .dropzone-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--scratch-operators-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .dropzone .placeholder {
+            color: #B0B8C4;
+            font-size: 0.85rem;
+            font-style: italic;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        /* Draggable tokens */
+        .token {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: grab;
+            user-select: none;
+            transition: 0.1s ease;
+            box-shadow: 0 3px 0 rgba(0,0,0,0.15);
+            border: 2px solid transparent;
+        }
+
+        .token:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+        }
+
+        .token:active {
+            cursor: grabbing;
+        }
+
+        .token.dragging {
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+
+        .token.drop-target {
+            border-color: var(--scratch-events);
+            box-shadow: 0 0 0 3px var(--scratch-events);
+        }
+
+        .token.motion { background: var(--scratch-motion); color: white; }
+        .token.looks { background: var(--scratch-looks); color: white; }
+        .token.control { background: var(--scratch-control); color: var(--scratch-text); }
+        .token.events { background: var(--scratch-events); color: var(--scratch-text); }
+        .token.operators { background: var(--scratch-operators); color: white; }
+        .token.myblocks { background: var(--scratch-myblocks); color: white; }
+        .token.variables { background: var(--scratch-variables); color: white; }
+
+        .token .drag-handle {
+            opacity: 0.6;
+            font-size: 0.75rem;
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 0.8rem;
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .feedback.show { display: block; }
+        .feedback.success { background: #E6F9E6; color: var(--scratch-operators-dark); border: 2px solid var(--scratch-operators); }
+        .feedback.error { background: #FFEEF0; color: var(--scratch-myblocks-dark); border: 2px solid var(--scratch-myblocks); }
+
+        /* Action buttons */
+        .activity-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 2px solid;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.1s ease;
+        }
+
+        .btn-check {
+            background: var(--scratch-operators);
+            border-color: var(--scratch-operators-dark);
+            color: white;
+            box-shadow: 0 3px 0 var(--scratch-operators-dark);
+        }
+
+        .btn-check:hover { background: #6ed16e; transform: translateY(-1px); }
+        .btn-check:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--scratch-operators-dark); }
+        .btn-check:disabled { background: #CCC; border-color: #AAA; box-shadow: 0 3px 0 #AAA; cursor: not-allowed; color: #777; }
+
+        .btn-reset {
+            background: var(--scratch-text-light);
+            border-color: var(--scratch-border);
+            color: var(--scratch-text);
+        }
+
+        .btn-reset:hover { background: #F0F0F0; }
+
+        /* Points pop */
+        .points-pop {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--scratch-events);
+            color: var(--scratch-text);
+            font-weight: 900;
+            padding: 1rem 2.5rem;
+            border-radius: 60px;
+            font-size: 1.8rem;
+            border: 3px solid var(--scratch-control-dark);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 2000;
+            animation: pop 0.3s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: translateX(-50%) scale(0.8); opacity: 0; }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+        }
+
+        /* Footer */
+        .footer-note {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #8A8FA3;
+            border-top: 2px solid var(--scratch-motion);
+            padding-top: 1.5rem;
+        }
+
+        .footer-note span {
+            color: var(--scratch-motion);
+            font-weight: 700;
+        }
+
+        .badge-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--scratch-operators-dark);
+        }
+
+        .badge-display i {
+            color: var(--scratch-events);
+        }
+    </style>
+</head>
+<body>
+    <div class="quest-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="school-brand">
+                <i class="fas fa-sort-amount-down"></i>
+                <div>
+                    <h1>SEQUENCING & <span>SORTING</span> QUEST</h1>
+                    <p>GRADE 6 · ALGORITHMS PRACTICE</p>
+                </div>
+            </div>
+            <div class="score-tracker">
+                <i class="fas fa-star"></i>
+                <span class="points" id="pointsDisplay">0</span>
+                <span style="color:#8A8FA3;">/ 40 pts</span>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span><i class="fas fa-flag-checkered" style="color:var(--scratch-motion)"></i> Challenge Progress</span>
+                <span id="progressText">0 / 4 activities</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Activities -->
+        <div class="activities" id="activitiesContainer">
+
+            <!-- Activity 1: Sequence the Sandwich Algorithm -->
+            <div class="activity-card" data-activity="1">
+                <div class="activity-header">
+                    <div class="activity-icon sequence"><i class="fas fa-list-ol"></i></div>
+                    <div>
+                        <div class="activity-title">Activity 1 · Sandwich Algorithm</div>
+                        <div class="activity-subtitle">Sequencing · Green Level</div>
+                    </div>
+                </div>
+                <div class="activity-desc">
+                    <i class="fas fa-bullseye" style="color:var(--scratch-events)"></i>
+                    <strong>Goal:</strong> Drag the steps into the correct order to make a peanut butter sandwich.
+                    An algorithm must be precise and in the right sequence!
+                </div>
+                <div class="game-area">
+                    <div class="pool" id="pool-1">
+                        <div class="pool-title"><i class="fas fa-hand-paper"></i> Steps (drag to reorder)</div>
+                        <!-- Tokens injected by JS -->
+                    </div>
+                    <div class="dropzone" id="dropzone-1">
+                        <div class="dropzone-title"><i class="fas fa-arrow-down"></i> Correct Order</div>
+                        <div class="placeholder">Drag steps here in order...</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback-1"></div>
+                <div class="activity-actions">
+                    <button class="btn btn-check" id="check-1" disabled><i class="fas fa-check"></i> Check Order</button>
+                    <button class="btn btn-reset" id="reset-1"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Activity 2: Sort the Numbers -->
+            <div class="activity-card" data-activity="2">
+                <div class="activity-header">
+                    <div class="activity-icon sorting"><i class="fas fa-sort-numeric-up"></i></div>
+                    <div>
+                        <div class="activity-title">Activity 2 · Number Sort</div>
+                        <div class="activity-subtitle">Sorting · Black Level</div>
+                    </div>
+                </div>
+                <div class="activity-desc">
+                    <i class="fas fa-bullseye" style="color:var(--scratch-events)"></i>
+                    <strong>Goal:</strong> Drag the numbers into the dropzone and arrange them from <strong>smallest to largest</strong>.
+                </div>
+                <div class="game-area">
+                    <div class="pool" id="pool-2">
+                        <div class="pool-title"><i class="fas fa-hand-paper"></i> Unsorted Numbers</div>
+                        <!-- Tokens injected by JS -->
+                    </div>
+                    <div class="dropzone" id="dropzone-2">
+                        <div class="dropzone-title"><i class="fas fa-arrow-down"></i> Sorted (small → large)</div>
+                        <div class="placeholder">Drag numbers here...</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback-2"></div>
+                <div class="activity-actions">
+                    <button class="btn btn-check" id="check-2" disabled><i class="fas fa-check"></i> Check Sort</button>
+                    <button class="btn btn-reset" id="reset-2"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Activity 3: Sequence the Scratch Blocks -->
+            <div class="activity-card" data-activity="3">
+                <div class="activity-header">
+                    <div class="activity-icon loop"><i class="fas fa-redo-alt"></i></div>
+                    <div>
+                        <div class="activity-title">Activity 3 · Scratch Block Sequence</div>
+                        <div class="activity-subtitle">Sequencing · Green Level</div>
+                    </div>
+                </div>
+                <div class="activity-desc">
+                    <i class="fas fa-bullseye" style="color:var(--scratch-events)"></i>
+                    <strong>Goal:</strong> Arrange these Scratch blocks in the correct order to draw a square.
+                    Hint: A square needs a loop, movement, and turning!
+                </div>
+                <div class="game-area">
+                    <div class="pool" id="pool-3">
+                        <div class="pool-title"><i class="fas fa-hand-paper"></i> Scratch Blocks</div>
+                        <!-- Tokens injected by JS -->
+                    </div>
+                    <div class="dropzone" id="dropzone-3">
+                        <div class="dropzone-title"><i class="fas fa-arrow-down"></i> Program Order</div>
+                        <div class="placeholder">Drag blocks here...</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback-3"></div>
+                <div class="activity-actions">
+                    <button class="btn btn-check" id="check-3" disabled><i class="fas fa-check"></i> Check Program</button>
+                    <button class="btn btn-reset" id="reset-3"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Activity 4: Debug the Sequence -->
+            <div class="activity-card" data-activity="4">
+                <div class="activity-header">
+                    <div class="activity-icon debug"><i class="fas fa-bug"></i></div>
+                    <div>
+                        <div class="activity-title">Activity 4 · Fix the Buggy Sequence</div>
+                        <div class="activity-subtitle">Sequencing + Debugging · Black Level</div>
+                    </div>
+                </div>
+                <div class="activity-desc">
+                    <i class="fas fa-bullseye" style="color:var(--scratch-events)"></i>
+                    <strong>Goal:</strong> The steps to brush your teeth are out of order. Drag them into the correct sequence!
+                </div>
+                <div class="game-area">
+                    <div class="pool" id="pool-4">
+                        <div class="pool-title"><i class="fas fa-hand-paper"></i> Buggy Steps</div>
+                        <!-- Tokens injected by JS -->
+                    </div>
+                    <div class="dropzone" id="dropzone-4">
+                        <div class="dropzone-title"><i class="fas fa-arrow-down"></i> Correct Sequence</div>
+                        <div class="placeholder">Drag steps here...</div>
+                    </div>
+                </div>
+                <div class="feedback" id="feedback-4"></div>
+                <div class="activity-actions">
+                    <button class="btn btn-check" id="check-4" disabled><i class="fas fa-check"></i> Check Sequence</button>
+                    <button class="btn btn-reset" id="reset-4"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-note">
+            <span>Sapporo International School</span> · Unit 3: Algorithms & Programs · Sequencing & Sorting Practice
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- GAME DATA ----------
+            const activities = {
+                1: {
+                    title: 'Sandwich Algorithm',
+                    tokens: [
+                        { id: 's1', label: 'Take two slices of bread', color: 'motion', correctOrder: 1 },
+                        { id: 's2', label: 'Open the peanut butter jar', color: 'motion', correctOrder: 2 },
+                        { id: 's3', label: 'Spread peanut butter', color: 'motion', correctOrder: 3 },
+                        { id: 's4', label: 'Put slices together', color: 'motion', correctOrder: 4 }
+                    ],
+                    checkFn: (orderedIds) => {
+                        // Expected order: s1, s2, s3, s4
+                        return JSON.stringify(orderedIds) === JSON.stringify(['s1','s2','s3','s4']);
+                    }
+                },
+                2: {
+                    title: 'Number Sort',
+                    tokens: [
+                        { id: 'n1', label: '42', color: 'looks', value: 42 },
+                        { id: 'n2', label: '7', color: 'looks', value: 7 },
+                        { id: 'n3', label: '99', color: 'looks', value: 99 },
+                        { id: 'n4', label: '23', color: 'looks', value: 23 },
+                        { id: 'n5', label: '58', color: 'looks', value: 58 }
+                    ],
+                    checkFn: (orderedIds) => {
+                        // Sort by value ascending: n2(7), n4(23), n1(42), n5(58), n3(99)
+                        const expected = ['n2','n4','n1','n5','n3'];
+                        return JSON.stringify(orderedIds) === JSON.stringify(expected);
+                    }
+                },
+                3: {
+                    title: 'Scratch Block Sequence',
+                    tokens: [
+                        { id: 'b1', label: 'when flag clicked', color: 'events', correctOrder: 1 },
+                        { id: 'b2', label: 'repeat 4', color: 'control', correctOrder: 2 },
+                        { id: 'b3', label: 'move 50 steps', color: 'motion', correctOrder: 3 },
+                        { id: 'b4', label: 'turn 90 degrees', color: 'motion', correctOrder: 4 }
+                    ],
+                    checkFn: (orderedIds) => {
+                        // Expected: b1, b2, b3, b4
+                        return JSON.stringify(orderedIds) === JSON.stringify(['b1','b2','b3','b4']);
+                    }
+                },
+                4: {
+                    title: 'Fix the Buggy Sequence',
+                    tokens: [
+                        { id: 'd1', label: 'Put toothpaste on brush', color: 'myblocks', correctOrder: 2 },
+                        { id: 'd2', label: 'Wet the toothbrush', color: 'myblocks', correctOrder: 1 },
+                        { id: 'd3', label: 'Rinse mouth with water', color: 'myblocks', correctOrder: 4 },
+                        { id: 'd4', label: 'Brush teeth for 2 minutes', color: 'myblocks', correctOrder: 3 }
+                    ],
+                    checkFn: (orderedIds) => {
+                        // Expected: d2, d1, d4, d3
+                        return JSON.stringify(orderedIds) === JSON.stringify(['d2','d1','d4','d3']);
+                    }
+                }
+            };
+
+            // ---------- STATE ----------
+            let points = 0;
+            const completedActivities = new Set();
+            const totalActivities = 4;
+            const pointsPerActivity = 10;
+            const totalPoints = totalActivities * pointsPerActivity;
+
+            // ---------- DOM ----------
+            const pointsDisplay = document.getElementById('pointsDisplay');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+
+            // ---------- UTILITY ----------
+            function shuffleArray(arr) {
+                const a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+            function updateProgress() {
+                const count = completedActivities.size;
+                const pct = (count / totalActivities) * 100;
+                progressFill.style.width = pct + '%';
+                progressText.textContent = `${count} / ${totalActivities} activities`;
+            }
+
+            function showPointsPopup(amount) {
+                const popup = document.createElement('div');
+                popup.className = 'points-pop';
+                popup.textContent = `+${amount} pts!`;
+                document.body.appendChild(popup);
+                setTimeout(() => popup.remove(), 800);
+            }
+
+            // ---------- BUILD TOKEN ELEMENT ----------
+            function createToken(token, poolId) {
+                const el = document.createElement('div');
+                el.className = `token ${token.color}`;
+                el.draggable = true;
+                el.dataset.id = token.id;
+                el.dataset.pool = poolId;
+                el.innerHTML = `<i class="fas fa-grip-vertical drag-handle"></i> ${token.label}`;
+
+                el.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', token.id);
+                    e.dataTransfer.setData('text/source', this.dataset.pool);
+                    this.classList.add('dragging');
+                    setTimeout(() => this.classList.remove('dragging'), 0);
+                });
+
+                el.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+
+                return el;
+            }
+
+            // ---------- SETUP DRAG & DROP FOR AN ACTIVITY ----------
+            function setupActivity(activityId) {
+                const data = activities[activityId];
+                const pool = document.getElementById(`pool-${activityId}`);
+                const dropzone = document.getElementById(`dropzone-${activityId}`);
+                const feedback = document.getElementById(`feedback-${activityId}`);
+                const checkBtn = document.getElementById(`check-${activityId}`);
+                const resetBtn = document.getElementById(`reset-${activityId}`);
+
+                // Remove existing tokens (keep titles/placeholders)
+                pool.querySelectorAll('.token').forEach(t => t.remove());
+                dropzone.querySelectorAll('.token').forEach(t => t.remove());
+                const placeholder = dropzone.querySelector('.placeholder');
+                if (placeholder) placeholder.style.display = 'block';
+
+                // Shuffle and add tokens to pool
+                const shuffled = shuffleArray(data.tokens);
+                shuffled.forEach(token => {
+                    const el = createToken(token, `pool-${activityId}`);
+                    pool.appendChild(el);
+                });
+
+                // Update check button state
+                checkBtn.disabled = true;
+                feedback.classList.remove('show');
+
+                // Reset dropzone listeners (replace to avoid duplicates)
+                const newDropzone = dropzone.cloneNode(true);
+                dropzone.parentNode.replaceChild(newDropzone, dropzone);
+
+                // Re-attach listeners
+                const dz = document.getElementById(`dropzone-${activityId}`);
+                const ph = dz.querySelector('.placeholder');
+
+                // Drag over on dropzone
+                dz.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    dz.style.borderColor = 'var(--scratch-events)';
+                    dz.style.background = '#FFFDF0';
+                });
+
+                dz.addEventListener('dragleave', function(e) {
+                    dz.style.borderColor = 'var(--scratch-operators)';
+                    dz.style.background = '';
+                });
+
+                dz.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    dz.style.borderColor = 'var(--scratch-operators)';
+                    dz.style.background = '';
+                    const tokenId = e.dataTransfer.getData('text/plain');
+                    const sourcePool = e.dataTransfer.getData('text/source');
+                    if (!tokenId) return;
+
+                    // Find the token element
+                    let tokenEl = document.querySelector(`.token[data-id="${tokenId}"]`);
+                    if (!tokenEl) return;
+
+                    // Remove from current parent and add to dropzone
+                    if (ph) ph.style.display = 'none';
+                    tokenEl.dataset.pool = `dropzone-${activityId}`;
+                    tokenEl.draggable = true;
+                    dz.appendChild(tokenEl);
+
+                    // Update check button
+                    checkBtn.disabled = dz.querySelectorAll('.token').length === 0;
+
+                    // Remove empty placeholder if tokens exist
+                    if (dz.querySelectorAll('.token').length > 0 && ph) ph.style.display = 'none';
+                });
+
+                // Allow dragging out of dropzone back to pool
+                pool.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+
+                pool.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    const tokenId = e.dataTransfer.getData('text/plain');
+                    if (!tokenId) return;
+                    let tokenEl = document.querySelector(`.token[data-id="${tokenId}"]`);
+                    if (!tokenEl) return;
+                    tokenEl.dataset.pool = `pool-${activityId}`;
+                    pool.appendChild(tokenEl);
+
+                    // Update check button
+                    checkBtn.disabled = dz.querySelectorAll('.token').length === 0;
+                    if (dz.querySelectorAll('.token').length === 0 && ph) ph.style.display = 'block';
+                });
+
+                // Check button
+                checkBtn.onclick = function() {
+                    const orderedIds = Array.from(dz.querySelectorAll('.token')).map(t => t.dataset.id);
+                    if (data.checkFn(orderedIds)) {
+                        // Success
+                        feedback.className = 'feedback show success';
+                        feedback.innerHTML = '<i class="fas fa-check-circle"></i> <strong>Correct!</strong> You completed this activity. +10 points!';
+                        checkBtn.disabled = true;
+
+                        if (!completedActivities.has(activityId)) {
+                            completedActivities.add(activityId);
+                            points += pointsPerActivity;
+                            pointsDisplay.textContent = points;
+                            showPointsPopup(pointsPerActivity);
+                            updateProgress();
+                            document.querySelector(`.activity-card[data-activity="${activityId}"]`).classList.add('completed');
+                        }
+
+                        // Check if all done
+                        if (completedActivities.size === totalActivities) {
+                            setTimeout(() => {
+                                alert('🏆 SEQUENCING & SORTING MASTER! You earned all 40 points!');
+                            }, 400);
+                        }
+                    } else {
+                        // Error
+                        feedback.className = 'feedback show error';
+                        feedback.innerHTML = '<i class="fas fa-times-circle"></i> <strong>Not quite right.</strong> Check the order and try again!';
+                        // Shake effect
+                        dz.style.animation = 'none';
+                        dz.offsetHeight;
+                        dz.style.animation = 'shake 0.3s';
+                    }
+                };
+
+                // Reset button
+                resetBtn.onclick = function() {
+                    setupActivity(activityId);
+                    // Re-enable check button state handled in setup
+                };
+
+                // Re-attach token dragstart listeners for all existing tokens in this activity
+                document.querySelectorAll(`.token[data-pool="pool-${activityId}"]`).forEach(el => {
+                    el.ondragstart = function(e) {
+                        e.dataTransfer.setData('text/plain', this.dataset.id);
+                        e.dataTransfer.setData('text/source', this.dataset.pool);
+                        this.classList.add('dragging');
+                        setTimeout(() => this.classList.remove('dragging'), 0);
+                    };
+                });
+            }
+
+            // ---------- SHAKE ANIMATION (injected) ----------
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    20% { transform: translateX(-6px); }
+                    40% { transform: translateX(6px); }
+                    60% { transform: translateX(-4px); }
+                    80% { transform: translateX(4px); }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+
+            // ---------- INIT ALL ACTIVITIES ----------
+            function initAll() {
+                [1, 2, 3, 4].forEach(id => setupActivity(id));
+                updateProgress();
+            }
+
+            // ---------- START ----------
+            initAll();
+        })();
+    </script>
+</body>
+</html>
