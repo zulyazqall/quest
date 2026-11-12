@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SequenceMaster - Coding Challenges</title>
+    <style>
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2d2d2d;
+            --accent-color: #ffa116;
+            --text-color: #e8e8e8;
+            --correct-color: #4CAF50;
+            --incorrect-color: #f44336;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--secondary-color);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #444;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #444;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .problem-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .problem-item {
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .problem-item:hover {
+            background-color: #3d3d3d;
+        }
+
+        .problem-item.active {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .problem-item.solved {
+            color: var(--correct-color);
+        }
+
+        .problem-item.attempted {
+            color: var(--incorrect-color);
+        }
+
+        .problem-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .problem-difficulty {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .easy {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .medium {
+            background-color: #FFC107;
+            color: black;
+        }
+
+        .hard {
+            background-color: #F44336;
+            color: white;
+        }
+
+        .problem-description {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .code-editor {
+            flex: 1;
+            background-color: var(--secondary-color);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .editor-header {
+            background-color: #252525;
+            padding: 8px 15px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .language-selector {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .editor-content {
+            height: calc(100% - 40px);
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border: none;
+            padding: 15px;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            resize: none;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .run-btn {
+            background-color: #555;
+            color: white;
+        }
+
+        .submit-btn {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .test-results {
+            background-color: var(--secondary-color);
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .test-case {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+        }
+
+        .test-case:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .test-case-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .passed {
+            color: var(--correct-color);
+        }
+
+        .failed {
+            color: var(--incorrect-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 200px;
+                border-right: none;
+                border-bottom: 1px solid #444;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Sequence Problems</h2>
+            <ul class="problem-list" id="problemList">
+                <!-- Problems will be added here dynamically -->
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <div class="logo">SequenceMaster</div>
+                <div class="user-info">Welcome, Coder!</div>
+            </div>
+
+            <div id="problemContent">
+                <div class="problem-title" id="problemTitle">Two Sum</div>
+                <div class="problem-difficulty easy">Easy</div>
+                <div class="problem-description" id="problemDescription">
+                    Given an array of integers nums and an integer target, return indices of the two numbers such that
+                    they add up to target.
+                    You may assume that each input would have exactly one solution, and you may not use the same element
+                    twice.
+                    You can return the answer in any order.
+                </div>
+
+                <div class="code-editor">
+                    <div class="editor-header">
+                        <select class="language-selector" id="languageSelector">
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="java">Java</option>
+                            <option value="c++">C++</option>
+                        </select>
+                        <div>🔧</div>
+                    </div>
+                    <div class="editor-content">
+                        <textarea id="codeEditor" spellcheck="false">def twoSum(nums, target):
+    # Your code here
+    pass</textarea>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="run-btn" id="runBtn">Run Code</button>
+                    <button class="submit-btn" id="submitBtn">Submit</button>
+                </div>
+
+                <div class="test-results hidden" id="testResults">
+                    <div class="test-case">
+                        <div class="test-case-title">Test Case 1</div>
+                        <div class="test-case-result">Running...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Problem data
+        const problems = [
+            {
+                id: 1,
+                title: "Fibonacci Sequence",
+                description: "Given a number n, return the nth Fibonacci number. The Fibonacci sequence is defined as F(0) = 0, F(1) = 1, F(n) = F(n-1) + F(n-2) for n > 1.",
+                difficulty: "easy",
+                defaultCode: {
+                    python: "def fib(n):\n    # Your code here\n    pass",
+                    javascript: "function fib(n) {\n    // Your code here\n}",
+                    java: "public int fib(int n) {\n    // Your code here\n}",
+                    "c++": "int fib(int n) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "5", output: "5" },
+                    { input: "10", output: "55" },
+                    { input: "20", output: "6765" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Longest Increasing Subsequence",
+                description: "Given an integer array nums, return the length of the longest strictly increasing subsequence.",
+                difficulty: "medium",
+                defaultCode: {
+                    python: "def lengthOfLIS(nums):\n    # Your code here\n    pass",
+                    javascript: "function lengthOfLIS(nums) {\n    // Your code here\n}",
+                    java: "public int lengthOfLIS(int[] nums) {\n    // Your code here\n}",
+                    "c++": "int lengthOfLIS(vector<int>& nums) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "[10,9,2,5,3,7,101,18]", output: "4" },
+                    { input: "[0,1,0,3,2,3]", output: "4" },
+                    { input: "[7,7,7,7,7,7,7]", output: "1" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Arithmetic Sequence",
+                description: "Given an array of numbers, return true if the array can be rearranged to form an arithmetic sequence, otherwise return false. An arithmetic sequence is one where the difference between consecutive elements is constant.",
+                difficulty: "easy",
+                defaultCode: {
+                    python: "def canMakeArithmeticProgression(arr):\n    # Your code here\n    pass",
+                    javascript: "function canMakeArithmeticProgression(arr) {\n    // Your code here\n}",
+                    java: "public boolean canMakeArithmeticProgression(int[] arr) {\n    // Your code here\n}",
+                    "c++": "bool canMakeArithmeticProgression(vector<int>& arr) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "[3,5,1]", output: "true" },
+                    { input: "[1,2,4]", output: "false" },
+                    { input: "[1,3,5,7,9]", output: "true" }
+                ]
+            },
+            {
+                id: 4,
+                title: "Sequence Reconstruction",
+                description: "Check whether the original sequence org can be uniquely reconstructed from the sequences in seqs. The original sequence is a permutation of the integers from 1 to n, with 1 ≤ n ≤ 10^4. Reconstruction means building a shortest common supersequence of the sequences in seqs that is the original sequence.",
+                difficulty: "hard",
+                defaultCode: {
+                    python: "def sequenceReconstruction(org, seqs):\n    # Your code here\n    pass",
+                    javascript: "function sequenceReconstruction(org, seqs) {\n    // Your code here\n}",
+                    java: "public boolean sequenceReconstruction(int[] org, List<List<Integer>> seqs) {\n    // Your code here\n}",
+                    "c++": "bool sequenceReconstruction(vector<int>& org, vector<vector<int>>& seqs) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "[1,2,3], [[1,2],[1,3]]", output: "false" },
+                    { input: "[1,2,3], [[1,2],[1,3],[2,3]]", output: "true" },
+                    { input: "[4,1,5,2,6,3], [[5,2,6,3],[4,1,5,2]]", output: "true" }
+                ]
+            },
+            {
+                id: 5,
+                title: "Consecutive Sequence",
+                description: "Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence. You must write an algorithm that runs in O(n) time.",
+                difficulty: "medium",
+                defaultCode: {
+                    python: "def longestConsecutive(nums):\n    # Your code here\n    pass",
+                    javascript: "function longestConsecutive(nums) {\n    // Your code here\n}",
+                    java: "public int longestConsecutive(int[] nums) {\n    // Your code here\n}",
+                    "c++": "int longestConsecutive(vector<int>& nums) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "[100,4,200,1,3,2]", output: "4" },
+                    { input: "[0,3,7,2,5,8,4,6,0,1]", output: "9" },
+                    { input: "[]", output: "0" }
+                ]
+            },
+            {
+                id: 6,
+                title: "Subsequence Check",
+                description: "Given two strings s and t, return true if s is a subsequence of t, or false otherwise. A subsequence is formed by deleting some (possibly none) of the characters without changing the relative positions of the remaining characters.",
+                difficulty: "easy",
+                defaultCode: {
+                    python: "def isSubsequence(s, t):\n    # Your code here\n    pass",
+                    javascript: "function isSubsequence(s, t) {\n    // Your code here\n}",
+                    java: "public boolean isSubsequence(String s, String t) {\n    // Your code here\n}",
+                    "c++": "bool isSubsequence(string s, string t) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: '"abc", "ahbgdc"', output: "true" },
+                    { input: '"axc", "ahbgdc"', output: "false" },
+                    { input: '"", "ahbgdc"', output: "true" }
+                ]
+            },
+            {
+                id: 7,
+                title: "Geometric Sequence",
+                description: "Given an array of numbers, return true if the array can be rearranged to form a geometric sequence, otherwise return false. A geometric sequence is one where the ratio between consecutive elements is constant.",
+                difficulty: "medium",
+                defaultCode: {
+                    python: "def canMakeGeometricProgression(arr):\n    # Your code here\n    pass",
+                    javascript: "function canMakeGeometricProgression(arr) {\n    // Your code here\n}",
+                    java: "public boolean canMakeGeometricProgression(int[] arr) {\n    // Your code here\n}",
+                    "c++": "bool canMakeGeometricProgression(vector<int>& arr) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "[1,2,4,8]", output: "true" },
+                    { input: "[1,3,9,27]", output: "true" },
+                    { input: "[1,1,1,1]", output: "true" },
+                    { input: "[1,2,3,4]", output: "false" }
+                ]
+            },
+            {
+                id: 8,
+                title: "Shortest Unsorted Continuous Subarray",
+                description: "Given an integer array nums, you need to find one continuous subarray that if you only sort this subarray in ascending order, then the whole array will be sorted in ascending order. Return the shortest such subarray and output its length.",
+                difficulty: "medium",
+                defaultCode: {
+                    python: "def findUnsortedSubarray(nums):\n    # Your code here\n    pass",
+                    javascript: "function findUnsortedSubarray(nums) {\n    // Your code here\n}",
+                    java: "public int findUnsortedSubarray(int[] nums) {\n    // Your code here\n}",
+                    "c++": "int findUnsortedSubarray(vector<int>& nums) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "[2,6,4,8,10,9,15]", output: "5" },
+                    { input: "[1,2,3,4]", output: "0" },
+                    { input: "[1]", output: "0" }
+                ]
+            },
+            {
+                id: 9,
+                title: "Longest Harmonious Subsequence",
+                description: "We define a harmonious array as an array where the difference between its maximum value and its minimum value is exactly 1. Given an integer array nums, return the length of its longest harmonious subsequence among all its possible subsequences.",
+                difficulty: "easy",
+                defaultCode: {
+                    python: "def findLHS(nums):\n    # Your code here\n    pass",
+                    javascript: "function findLHS(nums) {\n    // Your code here\n}",
+                    java: "public int findLHS(int[] nums) {\n    // Your code here\n}",
+                    "c++": "int findLHS(vector<int>& nums) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "[1,3,2,2,5,2,3,7]", output: "5" },
+                    { input: "[1,2,3,4]", output: "2" },
+                    { input: "[1,1,1,1]", output: "0" }
+                ]
+            },
+            {
+                id: 10,
+                title: "Wiggle Subsequence",
+                description: "Given an integer array nums, return the length of the longest wiggle sequence. A wiggle sequence is a sequence where the differences between successive numbers strictly alternate between positive and negative.",
+                difficulty: "medium",
+                defaultCode: {
+                    python: "def wiggleMaxLength(nums):\n    # Your code here\n    pass",
+                    javascript: "function wiggleMaxLength(nums) {\n    // Your code here\n}",
+                    java: "public int wiggleMaxLength(int[] nums) {\n    // Your code here\n}",
+                    "c++": "int wiggleMaxLength(vector<int>& nums) {\n    // Your code here\n}"
+                },
+                testCases: [
+                    { input: "[1,7,4,9,2,5]", output: "6" },
+                    { input: "[1,17,5,10,13,15,10,5,16,8]", output: "7" },
+                    { input: "[1,2,3,4,5,6,7,8,9]", output: "2" }
+                ]
+            }
+        ];
+
+        // DOM elements
+        const problemList = document.getElementById('problemList');
+        const problemTitle = document.getElementById('problemTitle');
+        const problemDescription = document.getElementById('problemDescription');
+        const difficultyElement = document.querySelector('.problem-difficulty');
+        const codeEditor = document.getElementById('codeEditor');
+        const languageSelector = document.getElementById('languageSelector');
+        const runBtn = document.getElementById('runBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const testResults = document.getElementById('testResults');
+
+        // Current state
+        let currentProblemId = 1;
+        let solvedProblems = new Set();
+        let attemptedProblems = new Set();
+
+        // Initialize the problem list
+        function initializeProblemList() {
+            problems.forEach(problem => {
+                const listItem = document.createElement('li');
+                listItem.className = 'problem-item';
+                listItem.textContent = `${problem.id}. ${problem.title}`;
+                listItem.dataset.id = problem.id;
+
+                listItem.addEventListener('click', () => {
+                    loadProblem(problem.id);
+                });
+
+                problemList.appendChild(listItem);
+            });
+
+            // Load the first problem by default
+            loadProblem(1);
+        }
+
+        // Load a problem by ID
+        function loadProblem(id) {
+            currentProblemId = id;
+            const problem = problems.find(p => p.id === id);
+
+            // Update the active problem in the list
+            document.querySelectorAll('.problem-item').forEach(item => {
+                item.classList.remove('active');
+                if (parseInt(item.dataset.id) === id) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Update the problem details
+            problemTitle.textContent = problem.title;
+            problemDescription.textContent = problem.description;
+
+            // Update difficulty
+            difficultyElement.className = 'problem-difficulty ' + problem.difficulty;
+            difficultyElement.textContent = problem.difficulty.charAt(0).toUpperCase() + problem.difficulty.slice(1);
+
+            // Update code editor with default code for current language
+            const language = languageSelector.value;
+            codeEditor.value = problem.defaultCode[language];
+
+            // Hide test results
+            testResults.classList.add('hidden');
+        }
+
+        // Run code
+        function runCode() {
+            testResults.classList.remove('hidden');
+            const testCasesContainer = testResults;
+            testCasesContainer.innerHTML = '';
+
+            const problem = problems.find(p => p.id === currentProblemId);
+
+            problem.testCases.forEach((testCase, index) => {
+                const testCaseElement = document.createElement('div');
+                testCaseElement.className = 'test-case';
+
+                const titleElement = document.createElement('div');
+                titleElement.className = 'test-case-title';
+                titleElement.textContent = `Test Case ${index + 1}`;
+
+                const resultElement = document.createElement('div');
+                resultElement.className = 'test-case-result';
+                resultElement.textContent = 'Running...';
+
+                testCaseElement.appendChild(titleElement);
+                testCaseElement.appendChild(resultElement);
+                testCasesContainer.appendChild(testCaseElement);
+
+                // Simulate running the test case (in a real app, this would actually run the code)
+                setTimeout(() => {
+                    // Randomly pass or fail for demonstration
+                    const passed = Math.random() > 0.3;
+                    if (passed) {
+                        resultElement.textContent = '✓ Passed';
+                        resultElement.className = 'test-case-result passed';
+                    } else {
+                        resultElement.textContent = '✗ Failed';
+                        resultElement.className = 'test-case-result failed';
+                    }
+                }, 1000 + Math.random() * 1000);
+            });
+
+            // Mark as attempted
+            if (!solvedProblems.has(currentProblemId)) {
+                attemptedProblems.add(currentProblemId);
+                updateProblemStatus();
+            }
+        }
+
+        // Submit code
+        function submitCode() {
+            testResults.classList.remove('hidden');
+            const testCasesContainer = testResults;
+            testCasesContainer.innerHTML = '';
+
+            const problem = problems.find(p => p.id === currentProblemId);
+
+            problem.testCases.forEach((testCase, index) => {
+                const testCaseElement = document.createElement('div');
+                testCaseElement.className = 'test-case';
+
+                const titleElement = document.createElement('div');
+                titleElement.className = 'test-case-title';
+                titleElement.textContent = `Test Case ${index + 1}`;
+
+                const resultElement = document.createElement('div');
+                resultElement.className = 'test-case-result';
+                resultElement.textContent = 'Running...';
+
+                testCaseElement.appendChild(titleElement);
+                testCaseElement.appendChild(resultElement);
+                testCasesContainer.appendChild(testCaseElement);
+
+                // Simulate running the test case (in a real app, this would actually run the code)
+                setTimeout(() => {
+                    // Randomly pass or fail for demonstration
+                    const passed = Math.random() > 0.5;
+                    if (passed) {
+                        resultElement.textContent = '✓ Passed';
+                        resultElement.className = 'test-case-result passed';
+                    } else {
+                        resultElement.textContent = '✗ Failed';
+                        resultElement.className = 'test-case-result failed';
+                    }
+
+                    // If this is the last test case, check if all passed
+                    if (index === problem.testCases.length - 1) {
+                        setTimeout(() => {
+                            // For demo purposes, we'll pretend all test cases passed
+                            const allPassed = true; // In reality, check all test cases
+
+                            if (allPassed) {
+                                const summary = document.createElement('div');
+                                summary.className = 'test-case-title';
+                                summary.style.marginTop = '10px';
+                                summary.style.color = 'var(--correct-color)';
+                                summary.textContent = 'All test cases passed!';
+                                testCasesContainer.appendChild(summary);
+
+                                // Mark as solved
+                                solvedProblems.add(currentProblemId);
+                                attemptedProblems.delete(currentProblemId);
+                                updateProblemStatus();
+                            }
+                        }, 500);
+                    }
+                }, 500 + Math.random() * 1000);
+            });
+        }
+
+        // Update problem status in the list
+        function updateProblemStatus() {
+            document.querySelectorAll('.problem-item').forEach(item => {
+                const id = parseInt(item.dataset.id);
+                item.classList.remove('solved', 'attempted');
+
+                if (solvedProblems.has(id)) {
+                    item.classList.add('solved');
+                } else if (attemptedProblems.has(id)) {
+                    item.classList.add('attempted');
+                }
+            });
+        }
+
+        // Event listeners
+        languageSelector.addEventListener('change', () => {
+            const problem = problems.find(p => p.id === currentProblemId);
+            codeEditor.value = problem.defaultCode[languageSelector.value];
+        });
+
+        runBtn.addEventListener('click', runCode);
+        submitBtn.addEventListener('click', submitCode);
+
+        // Initialize the app
+        initializeProblemList();
+    </script>
+</body>
+
+</html>

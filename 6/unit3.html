@@ -1,0 +1,1814 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sapporo Coding Quest · Grade 6 Algorithms (Scratch Theme)</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      /* ===== SCRATCH OFFICIAL COLOR PALETTE ===== */
+      :root {
+        --scratch-motion: #4c97ff;
+        --scratch-motion-dark: #3373cc;
+        --scratch-looks: #9966ff;
+        --scratch-looks-dark: #774dcb;
+        --scratch-sound: #cf63cf;
+        --scratch-sound-dark: #bd42bd;
+        --scratch-events: #ffbf00;
+        --scratch-events-dark: #cc9900;
+        --scratch-control: #ffab19;
+        --scratch-control-dark: #cf8b17;
+        --scratch-sensing: #5cb1d6;
+        --scratch-sensing-dark: #2e8eb8;
+        --scratch-operators: #59c059;
+        --scratch-operators-dark: #389438;
+        --scratch-variables: #ff8c1a;
+        --scratch-myblocks: #ff6680;
+        --scratch-myblocks-dark: #ff3355;
+        --scratch-bg: #e6f2ff;
+        --scratch-panel: #f9f9f9;
+        --scratch-border: #d9d9d9;
+        --scratch-text: #575e75;
+        --scratch-text-light: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Helvetica Neue", "Segoe UI", "Poppins", system-ui, sans-serif;
+      }
+
+      body {
+        background: var(--scratch-bg);
+        color: var(--scratch-text);
+        padding: 1.5rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .quest-container {
+        max-width: 1300px;
+        width: 100%;
+        background: var(--scratch-panel);
+        border-radius: 1.5rem;
+        padding: 2rem 2rem 2.5rem;
+        border: 3px solid var(--scratch-motion);
+        box-shadow: 0 12px 30px rgba(76, 151, 255, 0.15);
+      }
+
+      .header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.2rem;
+        border-bottom: 3px solid var(--scratch-motion);
+      }
+
+      .school-brand {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .school-brand i {
+        font-size: 2.8rem;
+        color: var(--scratch-text-light);
+        background: var(--scratch-motion);
+        padding: 0.5rem;
+        border-radius: 1rem;
+        border: 2px solid var(--scratch-control);
+      }
+
+      .school-brand h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--scratch-text);
+      }
+
+      .school-brand h1 span {
+        color: var(--scratch-motion);
+      }
+
+      .school-brand p {
+        color: var(--scratch-text-light);
+        background: var(--scratch-motion);
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 1.5px;
+        padding: 0.2rem 0.8rem;
+        border-radius: 20px;
+        display: inline-block;
+        margin-top: 0.2rem;
+      }
+
+      .badge-tracker {
+        background: var(--scratch-text-light);
+        border: 2px solid var(--scratch-motion);
+        border-radius: 40px;
+        padding: 0.6rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 4px 0 var(--scratch-motion-dark);
+      }
+
+      .badge-tracker i {
+        color: var(--scratch-events);
+        font-size: 1.5rem;
+      }
+
+      .badge-tracker .points {
+        font-weight: 800;
+        font-size: 1.3rem;
+        color: var(--scratch-motion);
+      }
+
+      .levels-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0 2.5rem;
+      }
+
+      .level-card {
+        background: var(--scratch-text-light);
+        border-radius: 1.2rem;
+        padding: 1.4rem 1.2rem 1.2rem;
+        border: 2px solid var(--scratch-border);
+        transition: all 0.15s ease;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        box-shadow: 0 5px 0 var(--scratch-border);
+        cursor: pointer;
+      }
+
+      .level-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 0 var(--scratch-border);
+      }
+
+      .level-card.green-level {
+        border-color: var(--scratch-operators);
+        box-shadow: 0 5px 0 var(--scratch-operators-dark);
+      }
+
+      .level-card.green-level:hover {
+        box-shadow: 0 8px 0 var(--scratch-operators-dark);
+      }
+
+      .level-card.black-level {
+        border-color: var(--scratch-control);
+        box-shadow: 0 5px 0 var(--scratch-control-dark);
+      }
+
+      .level-card.black-level:hover {
+        box-shadow: 0 8px 0 var(--scratch-control-dark);
+      }
+
+      .level-card.red-level {
+        border-color: var(--scratch-myblocks);
+        box-shadow: 0 5px 0 var(--scratch-myblocks-dark);
+        background: #fff5f7;
+      }
+
+      .level-card.red-level:hover {
+        box-shadow: 0 8px 0 var(--scratch-myblocks-dark);
+      }
+
+      .level-card.completed {
+        opacity: 0.75;
+        background: #f0f9f0;
+      }
+
+      .level-card.completed .level-badge {
+        background: var(--scratch-operators);
+        color: var(--scratch-text-light);
+      }
+
+      .level-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.8rem;
+      }
+
+      .level-number {
+        font-weight: 800;
+        font-size: 1.3rem;
+        color: var(--scratch-text-light);
+        background: var(--scratch-motion);
+        width: 2.6rem;
+        height: 2.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        border: 2px solid var(--scratch-motion-dark);
+        box-shadow: 0 3px 0 var(--scratch-motion-dark);
+      }
+
+      .level-card.black-level .level-number {
+        background: var(--scratch-control);
+        border-color: var(--scratch-control-dark);
+        box-shadow: 0 3px 0 var(--scratch-control-dark);
+      }
+
+      .level-card.red-level .level-number {
+        background: var(--scratch-myblocks);
+        border-color: var(--scratch-myblocks-dark);
+        box-shadow: 0 3px 0 var(--scratch-myblocks-dark);
+      }
+
+      .level-badge {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: var(--scratch-events);
+        color: var(--scratch-text);
+        padding: 0.3rem 0.9rem;
+        border-radius: 40px;
+        border: 2px solid var(--scratch-events-dark);
+      }
+
+      .level-card.black-level .level-badge {
+        background: var(--scratch-sensing);
+        border-color: var(--scratch-sensing-dark);
+      }
+
+      .level-card.red-level .level-badge {
+        background: var(--scratch-myblocks);
+        border-color: var(--scratch-myblocks-dark);
+        color: white;
+      }
+
+      .level-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        color: var(--scratch-text);
+        line-height: 1.3;
+      }
+
+      .level-desc {
+        font-size: 0.85rem;
+        color: #6e7385;
+        margin-bottom: 1rem;
+        flex: 1;
+        line-height: 1.4;
+      }
+
+      .level-skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 1rem;
+      }
+
+      .skill-tag {
+        font-size: 0.65rem;
+        background: var(--scratch-bg);
+        padding: 0.2rem 0.7rem;
+        border-radius: 20px;
+        color: var(--scratch-motion);
+        font-weight: 700;
+        border: 1px solid var(--scratch-motion);
+      }
+
+      .level-card.black-level .skill-tag {
+        color: var(--scratch-control-dark);
+        border-color: var(--scratch-control);
+        background: #fff8e5;
+      }
+
+      .level-card.red-level .skill-tag {
+        color: var(--scratch-myblocks-dark);
+        border-color: var(--scratch-myblocks);
+        background: #fff0f2;
+      }
+
+      .level-action {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+      }
+
+      .complete-btn {
+        background: var(--scratch-operators);
+        border: 2px solid var(--scratch-operators-dark);
+        color: var(--scratch-text-light);
+        font-weight: 800;
+        padding: 0.5rem 1.2rem;
+        border-radius: 40px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: 0.1s ease;
+        box-shadow: 0 3px 0 var(--scratch-operators-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .complete-btn:hover {
+        background: #6ed16e;
+        transform: translateY(-1px);
+      }
+
+      .complete-btn:disabled {
+        background: #ccc;
+        border-color: #aaa;
+        box-shadow: 0 3px 0 #aaa;
+        cursor: not-allowed;
+        color: #777;
+      }
+
+      .level-card.black-level .complete-btn {
+        background: var(--scratch-control);
+        border-color: var(--scratch-control-dark);
+        box-shadow: 0 3px 0 var(--scratch-control-dark);
+        color: var(--scratch-text);
+      }
+
+      .level-card.red-level .complete-btn {
+        background: var(--scratch-myblocks);
+        border-color: var(--scratch-myblocks-dark);
+        box-shadow: 0 3px 0 var(--scratch-myblocks-dark);
+      }
+
+      /* ===== ACTIVITY MODAL ===== */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(87, 94, 117, 0.75);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal {
+        background: var(--scratch-panel);
+        border-radius: 1.5rem;
+        max-width: 720px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 3px solid var(--scratch-motion);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        animation: modalPop 0.25s ease;
+      }
+
+      @keyframes modalPop {
+        0% {
+          transform: scale(0.92);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 1.8rem;
+        border-bottom: 3px solid var(--scratch-motion);
+        background: var(--scratch-text-light);
+        border-radius: 1.5rem 1.5rem 0 0;
+      }
+
+      .modal-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .modal-level-num {
+        font-weight: 900;
+        font-size: 1.4rem;
+        color: var(--scratch-text-light);
+        background: var(--scratch-motion);
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        border: 2px solid var(--scratch-motion-dark);
+        box-shadow: 0 3px 0 var(--scratch-motion-dark);
+      }
+
+      .modal-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--scratch-text);
+      }
+
+      .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.6rem;
+        color: var(--scratch-text);
+        cursor: pointer;
+        padding: 0.3rem 0.6rem;
+        border-radius: 10px;
+        transition: 0.1s;
+      }
+
+      .modal-close:hover {
+        background: #ffe5e5;
+        color: var(--scratch-myblocks);
+      }
+
+      .modal-body {
+        padding: 1.8rem;
+      }
+
+      .activity-intro {
+        font-size: 0.95rem;
+        color: #6e7385;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+      }
+
+      .activity-box {
+        background: var(--scratch-text-light);
+        border: 2px solid var(--scratch-border);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .activity-box h4 {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--scratch-motion);
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .activity-box p,
+      .activity-box li {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: var(--scratch-text);
+      }
+
+      .activity-box ul,
+      .activity-box ol {
+        padding-left: 1.4rem;
+        margin-top: 0.5rem;
+      }
+
+      .activity-box li {
+        margin-bottom: 0.4rem;
+      }
+
+      /* Drag & drop mini-game inside modal */
+      .sort-game {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin: 1rem 0;
+      }
+
+      .sort-item {
+        background: var(--scratch-motion);
+        color: white;
+        font-weight: 800;
+        padding: 0.8rem 1.2rem;
+        border-radius: 12px;
+        cursor: grab;
+        border: 2px solid var(--scratch-motion-dark);
+        box-shadow: 0 3px 0 var(--scratch-motion-dark);
+        user-select: none;
+        transition: 0.1s;
+      }
+
+      .sort-item:hover {
+        transform: translateY(-2px);
+      }
+
+      .sort-item.selected {
+        border-color: var(--scratch-events);
+        box-shadow: 0 0 0 3px var(--scratch-events);
+      }
+
+      .sort-dropzone {
+        min-height: 60px;
+        border: 2px dashed var(--scratch-operators);
+        border-radius: 12px;
+        padding: 0.8rem;
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        align-items: center;
+        background: #f5fff5;
+      }
+
+      .sequence-demo {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+
+      .seq-block {
+        background: var(--scratch-events);
+        color: var(--scratch-text);
+        font-weight: 700;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        border: 2px solid var(--scratch-events-dark);
+        font-size: 0.85rem;
+      }
+
+      .seq-block.repeat {
+        background: var(--scratch-control);
+        border-color: var(--scratch-control-dark);
+        margin-left: 1.5rem;
+      }
+
+      .seq-block.if {
+        background: var(--scratch-sensing);
+        border-color: var(--scratch-sensing-dark);
+        color: white;
+        margin-left: 1.5rem;
+      }
+
+      .debug-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .debug-list li {
+        background: #fff8f0;
+        border-left: 4px solid var(--scratch-control);
+        padding: 0.7rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+        transition: 0.1s;
+      }
+
+      .debug-list li:hover {
+        background: #ffefdb;
+      }
+
+      .debug-list li.fixed {
+        background: #eaffea;
+        border-left-color: var(--scratch-operators);
+        text-decoration: line-through;
+        color: #888;
+      }
+
+      .debug-list li i {
+        color: var(--scratch-control-dark);
+      }
+
+      .debug-list li.fixed i {
+        color: var(--scratch-operators);
+      }
+
+      .choice-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+        margin-top: 0.8rem;
+      }
+
+      .choice-btn {
+        background: var(--scratch-bg);
+        border: 2px solid var(--scratch-motion);
+        color: var(--scratch-text);
+        font-weight: 700;
+        padding: 0.8rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: 0.1s;
+        text-align: center;
+      }
+
+      .choice-btn:hover {
+        background: #d6e9ff;
+      }
+
+      .choice-btn.correct {
+        background: #d4f5d4;
+        border-color: var(--scratch-operators);
+        color: var(--scratch-operators-dark);
+      }
+
+      .choice-btn.wrong {
+        background: #ffe0e5;
+        border-color: var(--scratch-myblocks);
+        color: var(--scratch-myblocks-dark);
+      }
+
+      .feedback-msg {
+        margin-top: 1rem;
+        padding: 0.8rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: none;
+      }
+
+      .feedback-msg.show {
+        display: block;
+      }
+
+      .feedback-msg.success {
+        background: #e6f9e6;
+        color: var(--scratch-operators-dark);
+        border: 2px solid var(--scratch-operators);
+      }
+
+      .feedback-msg.error {
+        background: #ffeef0;
+        color: var(--scratch-myblocks-dark);
+        border: 2px solid var(--scratch-myblocks);
+      }
+
+      .modal-footer {
+        padding: 1.2rem 1.8rem;
+        border-top: 2px solid var(--scratch-border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        background: var(--scratch-text-light);
+        border-radius: 0 0 1.5rem 1.5rem;
+      }
+
+      .modal-btn {
+        padding: 0.7rem 1.6rem;
+        border-radius: 40px;
+        font-weight: 800;
+        font-size: 0.9rem;
+        cursor: pointer;
+        border: 2px solid;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: 0.1s;
+      }
+
+      .modal-btn.secondary {
+        background: var(--scratch-text-light);
+        border-color: var(--scratch-border);
+        color: var(--scratch-text);
+      }
+
+      .modal-btn.secondary:hover {
+        background: #f0f0f0;
+      }
+
+      .modal-btn.primary {
+        background: var(--scratch-operators);
+        border-color: var(--scratch-operators-dark);
+        color: white;
+        box-shadow: 0 3px 0 var(--scratch-operators-dark);
+      }
+
+      .modal-btn.primary:hover {
+        background: #6ed16e;
+        transform: translateY(-1px);
+      }
+
+      .modal-btn.primary:active {
+        transform: translateY(2px);
+        box-shadow: 0 1px 0 var(--scratch-operators-dark);
+      }
+
+      .modal-btn.primary:disabled {
+        background: #ccc;
+        border-color: #aaa;
+        box-shadow: 0 3px 0 #aaa;
+        cursor: not-allowed;
+        color: #777;
+      }
+
+      /* Scratch section (kept) */
+      .scratch-section {
+        margin: 2.5rem 0 1.5rem;
+        background: var(--scratch-text-light);
+        border-radius: 1.5rem;
+        padding: 2rem 2rem 1.8rem;
+        border: 3px solid var(--scratch-motion);
+        box-shadow: 0 8px 0 var(--scratch-motion-dark);
+      }
+
+      .scratch-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .scratch-header i {
+        font-size: 2.4rem;
+        color: var(--scratch-text-light);
+        background: var(--scratch-looks);
+        padding: 0.4rem;
+        border-radius: 1rem;
+        border: 2px solid var(--scratch-looks-dark);
+        box-shadow: 0 3px 0 var(--scratch-looks-dark);
+      }
+
+      .scratch-header h2 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--scratch-text);
+      }
+
+      .scratch-header h2 span {
+        color: var(--scratch-looks);
+      }
+
+      .scratch-workspace {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 2rem;
+        background: var(--scratch-bg);
+        border-radius: 1.2rem;
+        padding: 1.8rem;
+        border: 2px solid var(--scratch-motion);
+      }
+
+      @media (max-width: 800px) {
+        .scratch-workspace {
+          grid-template-columns: 1fr;
+        }
+        .choice-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .block-palette h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1.2rem;
+        color: var(--scratch-motion);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 800;
+      }
+
+      .block-category {
+        margin-bottom: 1.5rem;
+      }
+
+      .category-title {
+        font-weight: 800;
+        font-size: 0.85rem;
+        color: var(--scratch-text);
+        margin-bottom: 0.6rem;
+        text-transform: uppercase;
+        background: var(--scratch-text-light);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        display: inline-block;
+      }
+
+      .block-item {
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        cursor: grab;
+        transition: 0.1s;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--scratch-text-light);
+        box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+        user-select: none;
+      }
+
+      .block-item:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+      }
+
+      .block-item[data-type="motion"] {
+        background: var(--scratch-motion);
+      }
+      .block-item[data-type="looks"] {
+        background: var(--scratch-looks);
+      }
+      .block-item[data-type="control"] {
+        background: var(--scratch-control);
+        color: var(--scratch-text);
+      }
+      .block-item[data-type="events"] {
+        background: var(--scratch-events);
+        color: var(--scratch-text);
+      }
+
+      .script-area {
+        background: var(--scratch-text-light);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        border: 2px dashed var(--scratch-motion);
+        min-height: 340px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .script-area h3 {
+        font-size: 1.2rem;
+        color: var(--scratch-looks);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 800;
+      }
+
+      .script-blocks {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        margin-bottom: 1.5rem;
+        min-height: 200px;
+        background: var(--scratch-bg);
+        border-radius: 0.8rem;
+        padding: 1rem;
+        border: 1px solid var(--scratch-border);
+      }
+
+      .script-block {
+        padding: 0.7rem 1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: var(--scratch-text-light);
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
+        animation: pop 0.2s ease;
+        cursor: pointer;
+        transition: 0.1s;
+      }
+
+      .script-block:hover {
+        filter: brightness(0.95);
+        transform: translateX(2px);
+      }
+      .script-block.motion {
+        background: var(--scratch-motion);
+      }
+      .script-block.looks {
+        background: var(--scratch-looks);
+      }
+      .script-block.control {
+        background: var(--scratch-control);
+        color: var(--scratch-text);
+      }
+      .script-block.events {
+        background: var(--scratch-events);
+        color: var(--scratch-text);
+      }
+
+      .script-actions {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+      }
+
+      .run-btn {
+        background: var(--scratch-events);
+        border: 2px solid var(--scratch-events-dark);
+        color: var(--scratch-text);
+        font-weight: 800;
+        padding: 0.8rem 1.8rem;
+        border-radius: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.95rem;
+        box-shadow: 0 3px 0 var(--scratch-events-dark);
+        transition: 0.1s;
+      }
+
+      .run-btn:hover {
+        background: #ffd13d;
+        transform: translateY(-1px);
+      }
+
+      .clear-btn {
+        background: var(--scratch-text-light);
+        border: 2px solid var(--scratch-looks);
+        color: var(--scratch-looks);
+        font-weight: 800;
+        padding: 0.8rem 1.8rem;
+        border-radius: 40px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.95rem;
+        box-shadow: 0 3px 0 var(--scratch-looks);
+        transition: 0.1s;
+      }
+
+      .clear-btn:hover {
+        background: #f3edff;
+        transform: translateY(-1px);
+      }
+
+      .output-panel {
+        margin-top: 1rem;
+        background: var(--scratch-text);
+        padding: 1rem 1.5rem;
+        border-radius: 40px;
+        border: 2px solid var(--scratch-motion);
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        color: var(--scratch-text-light);
+        min-height: 3.5rem;
+        display: flex;
+        align-items: center;
+      }
+
+      .output-panel i {
+        margin-right: 0.8rem;
+        color: var(--scratch-events);
+      }
+
+      .footer-note {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        color: #8a8fa3;
+        border-top: 2px solid var(--scratch-motion);
+        padding-top: 1.5rem;
+      }
+
+      .footer-note span {
+        color: var(--scratch-motion);
+        font-weight: 700;
+      }
+
+      @keyframes pop {
+        0% {
+          transform: scale(0.9);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .points-pop {
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--scratch-events);
+        color: var(--scratch-text);
+        font-weight: 900;
+        padding: 1rem 2.5rem;
+        border-radius: 60px;
+        font-size: 1.8rem;
+        border: 3px solid var(--scratch-control-dark);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 2000;
+        animation: pop 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="quest-container">
+      <div class="header">
+        <div class="school-brand">
+          <i class="fas fa-code"></i>
+          <div>
+            <h1>SAPPORO <span>CODING QUEST</span></h1>
+            <p>GRADE 6 · ALGORITHMS & PROGRAMS</p>
+          </div>
+        </div>
+        <div class="badge-tracker">
+          <i class="fas fa-trophy"></i>
+          <span class="points" id="pointsDisplay">0</span>
+          <span style="color: #8a8fa3">/ 100 pts</span>
+        </div>
+      </div>
+
+      <div class="levels-grid" id="levelsGrid"></div>
+
+      <!-- Scratch Code Block Workbench (kept) -->
+      <div class="scratch-section">
+        <div class="scratch-header">
+          <i class="fas fa-cubes"></i>
+          <h2>SCRATCH <span>CODE BLOCK</span> WORKBENCH</h2>
+        </div>
+        <p style="color: #6e7385; margin-bottom: 1.5rem; font-size: 0.95rem">
+          <i class="fas fa-lightbulb" style="color: var(--scratch-events)"></i>
+          Drag blocks from the palette to the script area. Click a block in your
+          script to remove it. Then press <strong>Run</strong>!
+        </p>
+        <div class="scratch-workspace">
+          <div class="block-palette">
+            <h3><i class="fas fa-palette"></i> Block Palette</h3>
+            <div class="block-category">
+              <div class="category-title">Motion</div>
+              <div
+                class="block-item"
+                draggable="true"
+                data-block="move"
+                data-type="motion"
+              >
+                <i class="fas fa-arrow-right"></i> move 10 steps
+              </div>
+              <div
+                class="block-item"
+                draggable="true"
+                data-block="turn"
+                data-type="motion"
+              >
+                <i class="fas fa-undo-alt"></i> turn 15 degrees
+              </div>
+            </div>
+            <div class="block-category">
+              <div class="category-title">Looks</div>
+              <div
+                class="block-item"
+                draggable="true"
+                data-block="say"
+                data-type="looks"
+              >
+                <i class="fas fa-comment"></i> say "Hello!"
+              </div>
+            </div>
+            <div class="block-category">
+              <div class="category-title">Control</div>
+              <div
+                class="block-item"
+                draggable="true"
+                data-block="repeat"
+                data-type="control"
+              >
+                <i class="fas fa-redo-alt"></i> repeat 4
+              </div>
+              <div
+                class="block-item"
+                draggable="true"
+                data-block="if"
+                data-type="control"
+              >
+                <i class="fas fa-code-branch"></i> if touching edge?
+              </div>
+            </div>
+            <div class="block-category">
+              <div class="category-title">Events</div>
+              <div
+                class="block-item"
+                draggable="true"
+                data-block="whenflag"
+                data-type="events"
+              >
+                <i class="fas fa-flag"></i> when flag clicked
+              </div>
+            </div>
+          </div>
+          <div class="script-area">
+            <h3><i class="fas fa-scroll"></i> Your Script</h3>
+            <div class="script-blocks" id="scriptBlocks"></div>
+            <div class="script-actions">
+              <button class="run-btn" id="runScriptBtn">
+                <i class="fas fa-play"></i> Run
+              </button>
+              <button class="clear-btn" id="clearScriptBtn">
+                <i class="fas fa-trash-alt"></i> Clear
+              </button>
+            </div>
+            <div class="output-panel" id="outputPanel">
+              <i class="fas fa-terminal"></i>
+              <span id="outputText">Ready to run your algorithm…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span>Sapporo International School</span> · Unit 3: Algorithms &
+        Programs · Gamified Challenge (Scratch Theme)
+      </div>
+    </div>
+
+    <!-- ===== ACTIVITY MODAL ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-header-left">
+            <div class="modal-level-num" id="modalLevelNum">1</div>
+            <div class="modal-title" id="modalTitle">Activity Title</div>
+          </div>
+          <button class="modal-close" id="modalCloseBtn">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Activity content injected here -->
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn secondary" id="modalCancelBtn">
+            <i class="fas fa-times"></i> Close
+          </button>
+          <button class="modal-btn primary" id="modalCompleteBtn" disabled>
+            <i class="fas fa-check"></i> Complete Level
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        // ---------- LEVEL DATA ----------
+        const levels = [
+          {
+            id: 1,
+            title: "What Is an Algorithm?",
+            desc: "Write precise steps for a peanut butter sandwich. Another crew follows literally.",
+            skill: "Sequencing",
+            type: "green",
+          },
+          {
+            id: 2,
+            title: "Human Robot",
+            desc: "Guide a 'robot' from door to desk with exact commands. No guessing!",
+            skill: "Precision",
+            type: "green",
+          },
+          {
+            id: 3,
+            title: "Find the Bug",
+            desc: "A drawing algorithm has 3 errors. Find and fix them all.",
+            skill: "Debugging",
+            type: "black",
+          },
+          {
+            id: 4,
+            title: "Loop It",
+            desc: "Draw a staircase using a loop instead of individual steps.",
+            skill: "Repetition",
+            type: "green",
+          },
+          {
+            id: 5,
+            title: "If This, Then That",
+            desc: "Create 3 linked if-then statements for a classroom scenario.",
+            skill: "Selection",
+            type: "black",
+          },
+          {
+            id: 6,
+            title: "Flowchart Frenzy",
+            desc: "Convert your loop algorithm into a standard flowchart.",
+            skill: "Visualisation",
+            type: "green",
+          },
+          {
+            id: 7,
+            title: "The Sorting Algorithm",
+            desc: "Write instructions to sort 8 cards. Partner follows only written steps.",
+            skill: "Algorithm design",
+            type: "black",
+          },
+          {
+            id: 8,
+            title: "Program It (Paper)",
+            desc: "Create a program (or paper blocks) that draws a triangle and square.",
+            skill: "Algorithm → Program",
+            type: "green",
+          },
+          {
+            id: 9,
+            title: "Optimize It",
+            desc: "Rewrite Level 8 using fewer blocks. Compare before and after.",
+            skill: "Efficiency",
+            type: "black",
+          },
+          {
+            id: 10,
+            title: "Boss: Escape the Maze",
+            desc: "Design a maze algorithm with a loop, an if-then, and debugging.",
+            skill: "Integration",
+            type: "red",
+          },
+        ];
+
+        // ---------- STATE ----------
+        let points = 0;
+        const completedLevels = new Set();
+        const totalPoints = 100;
+        let currentLevelId = null;
+        let activitySolved = false;
+
+        // ---------- DOM ----------
+        const levelsGrid = document.getElementById("levelsGrid");
+        const pointsDisplay = document.getElementById("pointsDisplay");
+        const modalOverlay = document.getElementById("modalOverlay");
+        const modalLevelNum = document.getElementById("modalLevelNum");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+        const modalCloseBtn = document.getElementById("modalCloseBtn");
+        const modalCancelBtn = document.getElementById("modalCancelBtn");
+        const modalCompleteBtn = document.getElementById("modalCompleteBtn");
+
+        // ---------- RENDER LEVEL CARDS ----------
+        function renderLevels() {
+          levelsGrid.innerHTML = "";
+          levels.forEach((level) => {
+            const card = document.createElement("div");
+            card.className = `level-card ${level.type}-level`;
+            if (completedLevels.has(level.id)) card.classList.add("completed");
+            card.dataset.levelId = level.id;
+
+            const badgeLabel =
+              level.type === "green"
+                ? "GREEN"
+                : level.type === "black"
+                  ? "BLACK"
+                  : "BOSS";
+            card.innerHTML = `
+                        <div class="level-header">
+                            <div class="level-number">${level.id}</div>
+                            <div class="level-badge">${badgeLabel}</div>
+                        </div>
+                        <div class="level-title">${level.title}</div>
+                        <div class="level-desc">${level.desc}</div>
+                        <div class="level-skills"><span class="skill-tag">${level.skill}</span></div>
+                        <div class="level-action">
+                            <button class="complete-btn" data-level="${level.id}" ${completedLevels.has(level.id) ? "disabled" : ""}>
+                                <i class="fas ${completedLevels.has(level.id) ? "fa-check-circle" : "fa-flag-checkered"}"></i>
+                                ${completedLevels.has(level.id) ? "Completed" : "Start Activity"}
+                            </button>
+                        </div>
+                    `;
+            // Click on card (but not on the complete button) opens activity
+            card.addEventListener("click", function (e) {
+              if (e.target.closest(".complete-btn")) return;
+              openActivity(level.id);
+            });
+            // Complete button also opens activity if not completed
+            const btn = card.querySelector(".complete-btn");
+            btn.addEventListener("click", function (e) {
+              e.stopPropagation();
+              if (!completedLevels.has(level.id)) openActivity(level.id);
+            });
+            levelsGrid.appendChild(card);
+          });
+        }
+
+        // ---------- OPEN ACTIVITY MODAL ----------
+        function openActivity(levelId) {
+          const level = levels.find((l) => l.id === levelId);
+          if (!level) return;
+          currentLevelId = levelId;
+          activitySolved = false;
+
+          modalLevelNum.textContent = level.id;
+          modalLevelNum.style.background =
+            level.type === "black"
+              ? "var(--scratch-control)"
+              : level.type === "red"
+                ? "var(--scratch-myblocks)"
+                : "var(--scratch-motion)";
+          modalTitle.textContent = level.title;
+
+          // Build activity content based on level
+          modalBody.innerHTML = buildActivity(levelId);
+          modalCompleteBtn.disabled = true;
+          modalCompleteBtn.innerHTML =
+            '<i class="fas fa-check"></i> Complete Level';
+
+          // Attach activity-specific listeners
+          attachActivityListeners(levelId);
+
+          modalOverlay.classList.add("active");
+        }
+
+        function closeModal() {
+          modalOverlay.classList.remove("active");
+          currentLevelId = null;
+          activitySolved = false;
+        }
+
+        // ---------- BUILD ACTIVITY HTML PER LEVEL ----------
+        function buildActivity(levelId) {
+          switch (levelId) {
+            case 1:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> An algorithm must be precise. Put the sandwich-making steps in the correct order.</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-list-ol"></i> Order the steps</h4>
+                            <p>Click the steps below in the correct sequence (1 → 4).</p>
+                            <div class="sort-game" id="sortGame">
+                                <div class="sort-item" data-order="3">Spread peanut butter</div>
+                                <div class="sort-item" data-order="1">Take two slices of bread</div>
+                                <div class="sort-item" data-order="4">Put slices together</div>
+                                <div class="sort-item" data-order="2">Open the jar</div>
+                            </div>
+                            <div class="sort-dropzone" id="sortDropzone"><span style="color:#999;font-size:0.85rem;">Click steps in order…</span></div>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 2:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Choose the most precise command to move the robot to the desk.</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-robot"></i> Command the robot</h4>
+                            <p>The robot is at the door. Which command moves it 3 steps forward?</p>
+                            <div class="choice-grid" id="choiceGrid">
+                                <div class="choice-btn" data-correct="false">Go forward a bit</div>
+                                <div class="choice-btn" data-correct="true">Move 3 steps forward</div>
+                                <div class="choice-btn" data-correct="false">Walk to desk</div>
+                                <div class="choice-btn" data-correct="false">Go</div>
+                            </div>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 3:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Find and fix all 3 bugs in this "draw a square" algorithm.</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-bug"></i> Debug the algorithm</h4>
+                            <p>Click each buggy line to fix it.</p>
+                            <ul class="debug-list" id="debugList">
+                                <li data-bug="1"><i class="fas fa-times-circle"></i> Draw a line of length 10</li>
+                                <li data-bug="2"><i class="fas fa-times-circle"></i> Turn 90 degrees</li>
+                                <li data-bug="3"><i class="fas fa-times-circle"></i> Repeat 2 times</li>
+                            </ul>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 4:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Use a loop to draw a staircase of 5 steps. Which block is the loop?</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-redo-alt"></i> Identify the loop</h4>
+                            <p>Which Scratch block repeats commands?</p>
+                            <div class="choice-grid" id="choiceGrid">
+                                <div class="choice-btn" data-correct="false">move 10 steps</div>
+                                <div class="choice-btn" data-correct="true">repeat 5</div>
+                                <div class="choice-btn" data-correct="false">say "Hello"</div>
+                                <div class="choice-btn" data-correct="false">turn 15 degrees</div>
+                            </div>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 5:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Build a valid if-then statement.</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-code-branch"></i> Complete the condition</h4>
+                            <p>If it is raining, then ________.</p>
+                            <div class="choice-grid" id="choiceGrid">
+                                <div class="choice-btn" data-correct="false">wear sunglasses</div>
+                                <div class="choice-btn" data-correct="true">bring an umbrella</div>
+                                <div class="choice-btn" data-correct="false">eat lunch</div>
+                                <div class="choice-btn" data-correct="false">run outside</div>
+                            </div>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 6:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Match each flowchart symbol to its meaning.</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-project-diagram"></i> Flowchart symbols</h4>
+                            <p>Which symbol is used for a decision?</p>
+                            <div class="choice-grid" id="choiceGrid">
+                                <div class="choice-btn" data-correct="false">Oval (start/end)</div>
+                                <div class="choice-btn" data-correct="false">Rectangle (process)</div>
+                                <div class="choice-btn" data-correct="true">Diamond (decision)</div>
+                                <div class="choice-btn" data-correct="false">Arrow (flow)</div>
+                            </div>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 7:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Sort the numbers from smallest to largest using the swap algorithm.</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-sort-numeric-up"></i> Sort the cards</h4>
+                            <p>Click the two numbers to swap until sorted: 5, 2, 8, 1</p>
+                            <div class="sort-game" id="sortGame">
+                                <div class="sort-item" data-value="5">5</div>
+                                <div class="sort-item" data-value="2">2</div>
+                                <div class="sort-item" data-value="8">8</div>
+                                <div class="sort-item" data-value="1">1</div>
+                            </div>
+                            <p style="margin-top:0.5rem;font-size:0.8rem;color:#888;">Click two cards to swap them.</p>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 8:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Which sequence of blocks draws a square?</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-square"></i> Build the square program</h4>
+                            <p>Choose the correct order:</p>
+                            <div class="choice-grid" id="choiceGrid">
+                                <div class="choice-btn" data-correct="true">repeat 4 [move 50, turn 90]</div>
+                                <div class="choice-btn" data-correct="false">move 50, turn 90</div>
+                                <div class="choice-btn" data-correct="false">repeat 2 [move 50, turn 45]</div>
+                                <div class="choice-btn" data-correct="false">turn 360, move 50</div>
+                            </div>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 9:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Which version is more efficient?</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-tachometer-alt"></i> Compare programs</h4>
+                            <p>Version A: 4 separate "move 10" blocks.<br>Version B: 1 "repeat 4 [move 10]" block.</p>
+                            <p style="margin-top:0.8rem;">Which is more efficient?</p>
+                            <div class="choice-grid" id="choiceGrid">
+                                <div class="choice-btn" data-correct="false">Version A</div>
+                                <div class="choice-btn" data-correct="true">Version B</div>
+                            </div>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            case 10:
+              return `
+                        <p class="activity-intro"><i class="fas fa-bullseye" style="color:var(--scratch-events)"></i> <strong>Goal:</strong> Complete the maze algorithm with a loop and an if-then.</p>
+                        <div class="activity-box">
+                            <h4><i class="fas fa-dungeon"></i> Escape the maze</h4>
+                            <p>Which block combination solves the maze?</p>
+                            <div class="sequence-demo">
+                                <div class="seq-block">when flag clicked</div>
+                                <div class="seq-block repeat">repeat until at exit</div>
+                                <div class="seq-block if">if wall ahead → turn right</div>
+                                <div class="seq-block repeat">move 10 steps</div>
+                            </div>
+                            <div class="choice-grid" id="choiceGrid">
+                                <div class="choice-btn" data-correct="true">Loop + if-then + move</div>
+                                <div class="choice-btn" data-correct="false">Only move blocks</div>
+                                <div class="choice-btn" data-correct="false">Only say blocks</div>
+                                <div class="choice-btn" data-correct="false">No loop needed</div>
+                            </div>
+                        </div>
+                        <div class="feedback-msg" id="feedbackMsg"></div>
+                    `;
+            default:
+              return "<p>Activity coming soon.</p>";
+          }
+        }
+
+        // ---------- ATTACH LISTENERS PER ACTIVITY ----------
+        function attachActivityListeners(levelId) {
+          const feedback = document.getElementById("feedbackMsg");
+
+          // Choice-based activities (2, 4, 5, 6, 8, 9, 10)
+          const choiceGrid = document.getElementById("choiceGrid");
+          if (choiceGrid) {
+            choiceGrid.querySelectorAll(".choice-btn").forEach((btn) => {
+              btn.addEventListener("click", function () {
+                if (activitySolved) return;
+                const isCorrect = this.dataset.correct === "true";
+                if (isCorrect) {
+                  this.classList.add("correct");
+                  showFeedback(feedback, "✅ Correct! Well done.", "success");
+                  markSolved();
+                } else {
+                  this.classList.add("wrong");
+                  showFeedback(
+                    feedback,
+                    "❌ Not quite. Try another answer!",
+                    "error",
+                  );
+                }
+              });
+            });
+          }
+
+          // Level 1: Order the steps
+          if (levelId === 1) {
+            const sortItems = document.querySelectorAll("#sortGame .sort-item");
+            const dropzone = document.getElementById("sortDropzone");
+            let expectedOrder = 1;
+            sortItems.forEach((item) => {
+              item.addEventListener("click", function () {
+                if (activitySolved) return;
+                const order = parseInt(this.dataset.order);
+                if (order === expectedOrder) {
+                  dropzone.innerHTML = "";
+                  // Show placed items in order
+                  for (let i = 1; i <= expectedOrder; i++) {
+                    const placed =
+                      levels &&
+                      document.querySelector(
+                        `#sortGame .sort-item[data-order="${i}"]`,
+                      );
+                  }
+                  // Simpler: rebuild dropzone with chosen items
+                  dropzone.innerHTML = "";
+                  const chosen = [];
+                  sortItems.forEach((si) => {
+                    if (parseInt(si.dataset.order) <= expectedOrder) {
+                      chosen.push(si.textContent);
+                    }
+                  });
+                  chosen.forEach((txt) => {
+                    const span = document.createElement("span");
+                    span.className = "sort-item";
+                    span.style.cursor = "default";
+                    span.textContent = txt;
+                    dropzone.appendChild(span);
+                  });
+                  expectedOrder++;
+                  if (expectedOrder > 4) {
+                    showFeedback(
+                      feedback,
+                      "✅ Perfect sequence! Sandwich algorithm complete.",
+                      "success",
+                    );
+                    markSolved();
+                  }
+                } else {
+                  showFeedback(
+                    feedback,
+                    "❌ Not the next step. Think about what comes first.",
+                    "error",
+                  );
+                }
+              });
+            });
+          }
+
+          // Level 3: Debug the algorithm
+          if (levelId === 3) {
+            const debugList = document.getElementById("debugList");
+            let bugsFixed = 0;
+            debugList.querySelectorAll("li").forEach((li) => {
+              li.addEventListener("click", function () {
+                if (activitySolved || this.classList.contains("fixed")) return;
+                this.classList.add("fixed");
+                this.innerHTML =
+                  '<i class="fas fa-check-circle"></i> ' +
+                  this.textContent.trim() +
+                  " (fixed)";
+                bugsFixed++;
+                if (bugsFixed === 3) {
+                  showFeedback(
+                    feedback,
+                    "✅ All 3 bugs fixed! The square will now draw correctly.",
+                    "success",
+                  );
+                  markSolved();
+                } else {
+                  showFeedback(
+                    feedback,
+                    `🔧 Fixed ${bugsFixed}/3 bugs. Keep going!`,
+                    "success",
+                  );
+                }
+              });
+            });
+          }
+
+          // Level 7: Sort the numbers (swap two)
+          if (levelId === 7) {
+            const sortGame = document.getElementById("sortGame");
+            const items = Array.from(sortGame.querySelectorAll(".sort-item"));
+            let selected = null;
+
+            items.forEach((item) => {
+              item.addEventListener("click", function () {
+                if (activitySolved) return;
+                if (!selected) {
+                  selected = this;
+                  this.classList.add("selected");
+                } else if (selected === this) {
+                  this.classList.remove("selected");
+                  selected = null;
+                } else {
+                  // Swap text content and data-value
+                  const tempValue = selected.dataset.value;
+                  const tempText = selected.textContent;
+                  selected.dataset.value = this.dataset.value;
+                  selected.textContent = this.textContent;
+                  this.dataset.value = tempValue;
+                  this.textContent = tempText;
+                  selected.classList.remove("selected");
+                  selected = null;
+
+                  // Check if sorted
+                  const values = Array.from(
+                    sortGame.querySelectorAll(".sort-item"),
+                  ).map((el) => parseInt(el.dataset.value));
+                  const sorted = [...values].sort((a, b) => a - b);
+                  if (JSON.stringify(values) === JSON.stringify(sorted)) {
+                    showFeedback(
+                      feedback,
+                      "✅ Sorted! 1, 2, 5, 8 — algorithm complete.",
+                      "success",
+                    );
+                    markSolved();
+                  } else {
+                    showFeedback(
+                      feedback,
+                      "🔄 Swapped. Keep sorting!",
+                      "success",
+                    );
+                  }
+                }
+              });
+            });
+          }
+        }
+
+        function showFeedback(el, msg, type) {
+          el.textContent = msg;
+          el.className = "feedback-msg show " + type;
+        }
+
+        function markSolved() {
+          activitySolved = true;
+          modalCompleteBtn.disabled = false;
+        }
+
+        // ---------- COMPLETE LEVEL ----------
+        function completeLevel(levelId) {
+          if (completedLevels.has(levelId)) return;
+          completedLevels.add(levelId);
+          points += 10;
+          pointsDisplay.textContent = points;
+
+          const popup = document.createElement("div");
+          popup.className = "points-pop";
+          popup.textContent = "+10 pts!";
+          document.body.appendChild(popup);
+          setTimeout(() => popup.remove(), 800);
+
+          renderLevels();
+
+          if (points >= totalPoints) {
+            setTimeout(() => {
+              alert(
+                "🏆 SAPPORO ALGORITHM MASTER! You completed all 10 levels!",
+              );
+            }, 300);
+          }
+        }
+
+        // ---------- MODAL EVENTS ----------
+        modalCloseBtn.addEventListener("click", closeModal);
+        modalCancelBtn.addEventListener("click", closeModal);
+        modalOverlay.addEventListener("click", function (e) {
+          if (e.target === modalOverlay) closeModal();
+        });
+        modalCompleteBtn.addEventListener("click", function () {
+          if (currentLevelId && activitySolved) {
+            completeLevel(currentLevelId);
+            closeModal();
+          }
+        });
+
+        // ---------- SCRATCH BLOCK WORKBENCH ----------
+        const scriptBlocksContainer = document.getElementById("scriptBlocks");
+        const outputText = document.getElementById("outputText");
+        let scriptBlocks = [];
+
+        document.querySelectorAll(".block-item").forEach((block) => {
+          block.addEventListener("dragstart", function (e) {
+            e.dataTransfer.setData("text/plain", this.dataset.block);
+            e.dataTransfer.setData("text/type", this.dataset.type);
+          });
+        });
+
+        scriptBlocksContainer.addEventListener("dragover", (e) =>
+          e.preventDefault(),
+        );
+        scriptBlocksContainer.addEventListener("drop", function (e) {
+          e.preventDefault();
+          const blockName = e.dataTransfer.getData("text/plain");
+          const blockType = e.dataTransfer.getData("text/type");
+          if (blockName) addBlockToScript(blockName, blockType);
+        });
+
+        const blockMap = {
+          move: {
+            label: "move 10 steps",
+            icon: "fa-arrow-right",
+            type: "motion",
+          },
+          turn: {
+            label: "turn 15 degrees",
+            icon: "fa-undo-alt",
+            type: "motion",
+          },
+          say: { label: 'say "Hello!"', icon: "fa-comment", type: "looks" },
+          repeat: { label: "repeat 4", icon: "fa-redo-alt", type: "control" },
+          if: {
+            label: "if touching edge?",
+            icon: "fa-code-branch",
+            type: "control",
+          },
+          whenflag: {
+            label: "when flag clicked",
+            icon: "fa-flag",
+            type: "events",
+          },
+        };
+
+        function addBlockToScript(blockName, blockType) {
+          const info = blockMap[blockName] || {
+            label: blockName,
+            icon: "fa-cube",
+            type: "motion",
+          };
+          scriptBlocks.push({
+            name: blockName,
+            label: info.label,
+            icon: info.icon,
+            type: info.type,
+          });
+          renderScriptBlocks();
+        }
+
+        function renderScriptBlocks() {
+          scriptBlocksContainer.innerHTML = "";
+          scriptBlocks.forEach((block, index) => {
+            const el = document.createElement("div");
+            el.className = `script-block ${block.type}`;
+            el.innerHTML = `<i class="fas ${block.icon}"></i> ${block.label}`;
+            el.title = "Click to remove";
+            el.addEventListener("click", () => {
+              scriptBlocks.splice(index, 1);
+              renderScriptBlocks();
+            });
+            scriptBlocksContainer.appendChild(el);
+          });
+        }
+
+        document
+          .getElementById("clearScriptBtn")
+          .addEventListener("click", () => {
+            scriptBlocks = [];
+            renderScriptBlocks();
+            outputText.textContent = "Script cleared.";
+          });
+
+        document
+          .getElementById("runScriptBtn")
+          .addEventListener("click", () => {
+            if (scriptBlocks.length === 0) {
+              outputText.textContent =
+                "⚠️ Your script is empty. Drag some blocks first!";
+              return;
+            }
+            let output = "▶ Running: ";
+            scriptBlocks.forEach((block, i) => {
+              if (i > 0) output += " → ";
+              if (block.type === "control" && block.name === "repeat")
+                output += "[REPEAT 4]";
+              else if (block.type === "control" && block.name === "if")
+                output += "[IF touching edge?]";
+              else if (block.type === "events" && block.name === "whenflag")
+                output += "[WHEN FLAG CLICKED]";
+              else output += block.label;
+            });
+            output += " ✅ Done!";
+            outputText.textContent = output;
+          });
+
+        // ---------- INIT ----------
+        renderLevels();
+      })();
+    </script>
+  </body>
+</html>

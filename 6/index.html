@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oxford International Computing · Student Book 6</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          "Segoe UI", "Helvetica Neue", "Poppins", system-ui, sans-serif;
+      }
+
+      body {
+        background: #f2f5fa;
+        color: #1e2b3c;
+        padding: 2rem 1.5rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .container {
+        max-width: 1200px;
+        width: 100%;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 3px solid #1e2b3c;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .brand i {
+        font-size: 2.6rem;
+        background: #1e2b3c;
+        color: #fff;
+        padding: 0.6rem;
+        border-radius: 16px;
+      }
+
+      .brand h1 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: #1e2b3c;
+      }
+
+      .brand h1 span {
+        color: #4c97ff;
+      }
+
+      .brand p {
+        font-size: 0.9rem;
+        color: #5a6b7e;
+        font-weight: 500;
+        margin-top: 0.2rem;
+      }
+
+      .book-info {
+        background: #1e2b3c;
+        color: #fff;
+        padding: 0.6rem 1.4rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .book-info i {
+        color: #ffbf00;
+      }
+
+      /* Intro */
+      .intro {
+        text-align: center;
+        margin: 1.5rem 0 2.5rem;
+      }
+
+      .intro h2 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #1e2b3c;
+        margin-bottom: 0.5rem;
+      }
+
+      .intro h2 span {
+        color: #4c97ff;
+      }
+
+      .intro p {
+        color: #5a6b7e;
+        font-size: 1rem;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      /* Units Grid */
+      .units-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.8rem;
+        margin-bottom: 3rem;
+      }
+
+      .unit-card {
+        position: relative;
+        border-radius: 24px;
+        padding: 2rem 1.8rem 1.8rem;
+        color: #fff;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+        box-shadow: 0 8px 0 rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        text-decoration: none;
+        display: block;
+      }
+
+      .unit-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 0 rgba(0, 0, 0, 0.15);
+      }
+
+      .unit-card:active {
+        transform: translateY(2px);
+        box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+      }
+
+      /* Decorative background circle */
+      .unit-card::after {
+        content: "";
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.12);
+        pointer-events: none;
+      }
+
+      .unit-card::before {
+        content: "";
+        position: absolute;
+        bottom: -60px;
+        left: -30px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        pointer-events: none;
+      }
+
+      /* Unit-specific colors */
+      .unit-1 {
+        background: #f28c28;
+      } /* Orange */
+      .unit-2 {
+        background: #5cb1d6;
+      } /* Light Blue */
+      .unit-3 {
+        background: #9966ff;
+      } /* Purple */
+      .unit-4 {
+        background: #8fd14f;
+      } /* Light Green */
+      .unit-5 {
+        background: #4c97ff;
+      } /* Blue */
+      .unit-6 {
+        background: #e84a5f;
+      } /* Red */
+
+      .unit-number {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0.9;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .unit-number i {
+        font-size: 0.9rem;
+      }
+
+      .unit-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .unit-subtitle {
+        font-size: 0.88rem;
+        opacity: 0.9;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+      }
+
+      .unit-topics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .topic-tag {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        padding: 0.3rem 0.8rem;
+        border-radius: 40px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        backdrop-filter: blur(4px);
+      }
+
+      .unit-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: rgba(255, 255, 255, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        padding: 0.6rem 1.4rem;
+        border-radius: 40px;
+        font-weight: 800;
+        font-size: 0.85rem;
+        transition: 0.15s ease;
+        position: relative;
+        z-index: 1;
+      }
+
+      .unit-card:hover .unit-cta {
+        background: rgba(255, 255, 255, 0.4);
+        border-color: #fff;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 2px solid #d5dee9;
+        color: #7a8a9e;
+        font-size: 0.85rem;
+      }
+
+      .footer span {
+        color: #1e2b3c;
+        font-weight: 700;
+      }
+
+      @media (max-width: 480px) {
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+        .intro h2 {
+          font-size: 1.7rem;
+        }
+        .unit-title {
+          font-size: 1.35rem;
+        }
+        .units-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="brand">
+          <i class="fas fa-laptop-code"></i>
+          <div>
+            <h1>Oxford International <span>Computing</span></h1>
+            <p>Student Book 6 · Complete Course Index</p>
+          </div>
+        </div>
+        <div class="book-info">
+          <i class="fas fa-book-open"></i>
+          <span>6 Units · Student Book 6</span>
+        </div>
+      </div>
+
+      <!-- Intro -->
+      <div class="intro">
+        <h2>Choose Your <span>Unit</span></h2>
+        <p>
+          Explore all six units of the Oxford International Computing Student
+          Book 6. Click any unit card to open its dedicated lesson page and
+          start learning.
+        </p>
+      </div>
+
+      <!-- Units Grid -->
+      <div class="units-grid">
+        <!-- Unit 1: The Nature of Technology (Orange) -->
+        <a
+          href="unit1.html"
+          class="unit-card unit-1"
+          aria-label="Open Unit 1: The Nature of Technology"
+        >
+          <div class="unit-number">
+            <i class="fas fa-microchip"></i>
+            Unit 1
+          </div>
+          <div class="unit-title">The Nature of Technology</div>
+          <div class="unit-subtitle">
+            Discover how technology shapes our world, from hardware to the
+            internet, and learn to use digital tools safely.
+          </div>
+          <div class="unit-topics">
+            <span class="topic-tag">Hardware</span>
+            <span class="topic-tag">Software</span>
+            <span class="topic-tag">Internet</span>
+          </div>
+          <div class="unit-cta">
+            Open Unit <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+
+        <!-- Unit 2: Digital Literacy (Light Blue) -->
+        <a
+          href="unit2.html"
+          class="unit-card unit-2"
+          aria-label="Open Unit 2: Digital Literacy"
+        >
+          <div class="unit-number">
+            <i class="fas fa-shield-alt"></i>
+            Unit 2
+          </div>
+          <div class="unit-title">Digital Literacy</div>
+          <div class="unit-subtitle">
+            Learn to be a responsible digital citizen: safe searching, online
+            etiquette, and evaluating information.
+          </div>
+          <div class="unit-topics">
+            <span class="topic-tag">Online Safety</span>
+            <span class="topic-tag">Digital Footprint</span>
+            <span class="topic-tag">Research</span>
+          </div>
+          <div class="unit-cta">
+            Open Unit <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+
+        <!-- Unit 3: Computational Thinking (Purple) -->
+        <a
+          href="unit3.html"
+          class="unit-card unit-3"
+          aria-label="Open Unit 3: Computational Thinking"
+        >
+          <div class="unit-number">
+            <i class="fas fa-brain"></i>
+            Unit 3
+          </div>
+          <div class="unit-title">Computational Thinking</div>
+          <div class="unit-subtitle">
+            Break down problems, spot patterns, and design algorithms — the
+            thinking skills behind all programming.
+          </div>
+          <div class="unit-topics">
+            <span class="topic-tag">Algorithms</span>
+            <span class="topic-tag">Decomposition</span>
+            <span class="topic-tag">Patterns</span>
+          </div>
+          <div class="unit-cta">
+            Open Unit <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+
+        <!-- Unit 4: Programming (Light Green) -->
+        <a
+          href="unit4.html"
+          class="unit-card unit-4"
+          aria-label="Open Unit 4: Programming"
+        >
+          <div class="unit-number">
+            <i class="fas fa-code"></i>
+            Unit 4
+          </div>
+          <div class="unit-title">Programming</div>
+          <div class="unit-subtitle">
+            Turn algorithms into real programs using Scratch blocks — sequences,
+            loops, selection, and variables.
+          </div>
+          <div class="unit-topics">
+            <span class="topic-tag">Scratch</span>
+            <span class="topic-tag">Loops</span>
+            <span class="topic-tag">Conditionals</span>
+          </div>
+          <div class="unit-cta">
+            Open Unit <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+
+        <!-- Unit 5: Multimedia (Blue) -->
+        <a
+          href="unit5.html"
+          class="unit-card unit-5"
+          aria-label="Open Unit 5: Multimedia"
+        >
+          <div class="unit-number">
+            <i class="fas fa-photo-video"></i>
+            Unit 5
+          </div>
+          <div class="unit-title">Multimedia</div>
+          <div class="unit-subtitle">
+            Create and combine images, sound, and video to build engaging
+            digital presentations and projects.
+          </div>
+          <div class="unit-topics">
+            <span class="topic-tag">Images</span>
+            <span class="topic-tag">Audio</span>
+            <span class="topic-tag">Video</span>
+          </div>
+          <div class="unit-cta">
+            Open Unit <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+
+        <!-- Unit 6: Number and Data (Red) -->
+        <a
+          href="unit6.html"
+          class="unit-card unit-6"
+          aria-label="Open Unit 6: Number and Data"
+        >
+          <div class="unit-number">
+            <i class="fas fa-chart-bar"></i>
+            Unit 6
+          </div>
+          <div class="unit-title">Number and Data</div>
+          <div class="unit-subtitle">
+            Work with numbers, spreadsheets, and data — collect, organise, and
+            analyse information to solve problems.
+          </div>
+          <div class="unit-topics">
+            <span class="topic-tag">Spreadsheets</span>
+            <span class="topic-tag">Data</span>
+            <span class="topic-tag">Charts</span>
+          </div>
+          <div class="unit-cta">
+            Open Unit <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <span>Oxford International Computing</span> · Student Book 6 · Unit
+        Index
+      </div>
+    </div>
+  </body>
+</html>
