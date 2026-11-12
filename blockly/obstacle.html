@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Blockly Robot Adventure</title>
+
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #eaf6ff;
+        text-align: center;
+      }
+
+      h1 {
+        color: #1565c0;
+      }
+
+      #game {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 25px;
+        flex-wrap: wrap;
+        padding: 10px;
+      }
+
+      #blocklyDiv {
+        width: 500px;
+        height: 500px;
+        background: white;
+        border: 3px solid #2196f3;
+        border-radius: 15px;
+      }
+
+      #board {
+        display: grid;
+        gap: 4px;
+        justify-content: center;
+        margin: 20px auto;
+      }
+
+      .cell {
+        width: 65px;
+        height: 65px;
+        background: white;
+        border: 2px solid #90caf9;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+      }
+
+      .obstacle {
+        background: #78909c;
+      }
+
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 22px;
+        margin: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        color: white;
+      }
+
+      #runButton {
+        background: #43a047;
+      }
+
+      #resetButton {
+        background: #757575;
+      }
+
+      #nextButton {
+        background: #1976d2;
+      }
+
+      #message {
+        min-height: 40px;
+        font-size: 21px;
+        font-weight: bold;
+        margin: 10px;
+      }
+
+      #steps {
+        font-size: 18px;
+        color: #555;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>🤖 Blockly Robot Adventure</h1>
+
+    <h2 id="levelTitle">Level 1</h2>
+
+    <p id="instructions"></p>
+
+    <div id="game">
+      <div id="blocklyDiv"></div>
+
+      <div>
+        <h2>🗺️ Robot World</h2>
+
+        <div id="board"></div>
+
+        <button id="runButton" onclick="runCode()">▶️ Run</button>
+
+        <button id="resetButton" onclick="resetGame()">🔄 Reset</button>
+
+        <button id="nextButton" onclick="nextLevel()" style="display: none">
+          ➡️ Next Level
+        </button>
+
+        <div id="steps"></div>
+
+        <div id="message"></div>
+      </div>
+    </div>
+
+    <!-- =====================================================
+     BLOCKLY TOOLBOX
+====================================================== -->
+
+    <xml id="toolbox" style="display: none">
+      <block type="move_right"></block>
+      <block type="move_left"></block>
+      <block type="move_down"></block>
+      <block type="move_up"></block>
+    </xml>
+
+    <script>
+      // ======================================================
+      // LEVEL DATA
+      // ======================================================
+
+      const levels = [
+        // LEVEL 1
+        {
+          rows: 2,
+          cols: 4,
+
+          start: 0,
+          goal: 7,
+
+          obstacles: [2],
+
+          instructions: "Level 1: Avoid 🧱 and reach ⭐!",
+        },
+
+        // LEVEL 2
+        {
+          rows: 3,
+          cols: 4,
+
+          start: 0,
+          goal: 11,
+
+          obstacles: [1, 5, 6],
+
+          instructions: "Level 2: Find a path around the 🧱!",
+        },
+
+        // LEVEL 3
+        {
+          rows: 4,
+          cols: 5,
+
+          start: 0,
+          goal: 19,
+
+          obstacles: [6, 7, 8, 11, 12, 16],
+
+          instructions: "Level 3: Be careful! Many 🧱 are blocking the way!",
+        },
+      ];
+
+      let currentLevel = 0;
+      let robotPosition = 0;
+      let isRunning = false;
+
+      // ======================================================
+      // CUSTOM BLOCKS
+      // ======================================================
+
+      Blockly.Blocks["move_right"] = {
+        init: function () {
+          this.appendDummyInput().appendField("➡️ Move Right");
+
+          this.setPreviousStatement(true);
+          this.setNextStatement(true);
+          this.setColour(120);
+        },
+      };
+
+      Blockly.Blocks["move_left"] = {
+        init: function () {
+          this.appendDummyInput().appendField("⬅️ Move Left");
+
+          this.setPreviousStatement(true);
+          this.setNextStatement(true);
+          this.setColour(20);
+        },
+      };
+
+      Blockly.Blocks["move_down"] = {
+        init: function () {
+          this.appendDummyInput().appendField("⬇️ Move Down");
+
+          this.setPreviousStatement(true);
+          this.setNextStatement(true);
+          this.setColour(210);
+        },
+      };
+
+      Blockly.Blocks["move_up"] = {
+        init: function () {
+          this.appendDummyInput().appendField("⬆️ Move Up");
+
+          this.setPreviousStatement(true);
+          this.setNextStatement(true);
+          this.setColour(280);
+        },
+      };
+
+      // ======================================================
+      // JAVASCRIPT GENERATOR
+      // ======================================================
+
+      javascript.javascriptGenerator.forBlock["move_right"] = function (
+        block,
+        generator,
+      ) {
+        return "moveRight();\n";
+      };
+
+      javascript.javascriptGenerator.forBlock["move_left"] = function (
+        block,
+        generator,
+      ) {
+        return "moveLeft();\n";
+      };
+
+      javascript.javascriptGenerator.forBlock["move_down"] = function (
+        block,
+        generator,
+      ) {
+        return "moveDown();\n";
+      };
+
+      javascript.javascriptGenerator.forBlock["move_up"] = function (
+        block,
+        generator,
+      ) {
+        return "moveUp();\n";
+      };
+
+      // ======================================================
+      // BLOCKLY WORKSPACE
+      // ======================================================
+
+      const workspace = Blockly.inject("blocklyDiv", {
+        toolbox: document.getElementById("toolbox"),
+        scrollbars: true,
+        trashcan: true,
+      });
+
+      // ======================================================
+      // CREATE BOARD
+      // ======================================================
+
+      function createBoard() {
+        const level = levels[currentLevel];
+
+        const board = document.getElementById("board");
+
+        board.innerHTML = "";
+
+        board.style.gridTemplateColumns = `repeat(${level.cols}, 65px)`;
+
+        for (let i = 0; i < level.rows * level.cols; i++) {
+          const cell = document.createElement("div");
+
+          cell.className = "cell";
+
+          cell.id = "cell-" + i;
+
+          // Add obstacle
+          if (level.obstacles.includes(i)) {
+            cell.classList.add("obstacle");
+
+            cell.innerHTML = "🧱";
+          }
+
+          board.appendChild(cell);
+        }
+
+        drawRobot();
+      }
+
+      // ======================================================
+      // DRAW ROBOT
+      // ======================================================
+
+      function drawRobot() {
+        const level = levels[currentLevel];
+
+        for (let i = 0; i < level.rows * level.cols; i++) {
+          const cell = document.getElementById("cell-" + i);
+
+          if (!cell) continue;
+
+          // Keep obstacles
+          if (level.obstacles.includes(i)) {
+            cell.innerHTML = "🧱";
+          } else {
+            cell.innerHTML = "";
+          }
+        }
+
+        // Draw star
+        const goal = document.getElementById("cell-" + level.goal);
+
+        if (goal) {
+          goal.innerHTML = "⭐";
+        }
+
+        // Draw robot
+        const robot = document.getElementById("cell-" + robotPosition);
+
+        if (robot) {
+          if (robotPosition === level.goal) {
+            robot.innerHTML = "🤖⭐";
+          } else {
+            robot.innerHTML = "🤖";
+          }
+        }
+      }
+
+      // ======================================================
+      // CHECK IF POSITION IS SAFE
+      // ======================================================
+
+      function canMove(position) {
+        const level = levels[currentLevel];
+
+        // Outside board
+        if (position < 0 || position >= level.rows * level.cols) {
+          return false;
+        }
+
+        // Obstacle
+        if (level.obstacles.includes(position)) {
+          return false;
+        }
+
+        return true;
+      }
+
+      // ======================================================
+      // MOVE RIGHT
+      // ======================================================
+
+      function moveRight() {
+        const level = levels[currentLevel];
+
+        const col = robotPosition % level.cols;
+
+        if (col < level.cols - 1) {
+          const newPosition = robotPosition + 1;
+
+          if (canMove(newPosition)) {
+            robotPosition = newPosition;
+          } else {
+            obstacleMessage();
+          }
+        }
+
+        drawRobot();
+      }
+
+      // ======================================================
+      // MOVE LEFT
+      // ======================================================
+
+      function moveLeft() {
+        const level = levels[currentLevel];
+
+        const col = robotPosition % level.cols;
+
+        if (col > 0) {
+          const newPosition = robotPosition - 1;
+
+          if (canMove(newPosition)) {
+            robotPosition = newPosition;
+          } else {
+            obstacleMessage();
+          }
+        }
+
+        drawRobot();
+      }
+
+      // ======================================================
+      // MOVE DOWN
+      // ======================================================
+
+      function moveDown() {
+        const level = levels[currentLevel];
+
+        const newPosition = robotPosition + level.cols;
+
+        if (canMove(newPosition)) {
+          robotPosition = newPosition;
+        } else {
+          obstacleMessage();
+        }
+
+        drawRobot();
+      }
+
+      // ======================================================
+      // MOVE UP
+      // ======================================================
+
+      function moveUp() {
+        const level = levels[currentLevel];
+
+        const newPosition = robotPosition - level.cols;
+
+        if (canMove(newPosition)) {
+          robotPosition = newPosition;
+        } else {
+          obstacleMessage();
+        }
+
+        drawRobot();
+      }
+
+      // ======================================================
+      // OBSTACLE MESSAGE
+      // ======================================================
+
+      function obstacleMessage() {
+        document.getElementById("message").innerHTML =
+          "💥 Oops! There is a 🧱 obstacle!";
+
+        document.getElementById("message").style.color = "#d32f2f";
+      }
+
+      // ======================================================
+      // WAIT
+      // ======================================================
+
+      function wait(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      // ======================================================
+      // RUN CODE
+      // ======================================================
+
+      async function runCode() {
+        if (isRunning) return;
+
+        isRunning = true;
+
+        document.getElementById("message").innerHTML = "";
+
+        document.getElementById("nextButton").style.display = "none";
+
+        robotPosition = levels[currentLevel].start;
+
+        drawRobot();
+
+        const code = javascript.javascriptGenerator.workspaceToCode(workspace);
+
+        const steps = code
+          .split("\n")
+          .map((x) => x.trim())
+          .filter((x) => x.length > 0);
+
+        let stepNumber = 0;
+
+        for (const step of steps) {
+          stepNumber++;
+
+          document.getElementById("steps").innerHTML = "👣 Step " + stepNumber;
+
+          if (step === "moveRight();") {
+            moveRight();
+          } else if (step === "moveLeft();") {
+            moveLeft();
+          } else if (step === "moveDown();") {
+            moveDown();
+          } else if (step === "moveUp();") {
+            moveUp();
+          }
+
+          // Slow movement
+          await wait(800);
+        }
+
+        // ====================================================
+        // CHECK RESULT
+        // ====================================================
+
+        const level = levels[currentLevel];
+
+        if (robotPosition === level.goal) {
+          document.getElementById("message").innerHTML =
+            "🎉 Amazing! You reached the star! ⭐";
+
+          document.getElementById("message").style.color = "#2e7d32";
+
+          if (currentLevel < levels.length - 1) {
+            document.getElementById("nextButton").style.display =
+              "inline-block";
+          } else {
+            document.getElementById("message").innerHTML =
+              "🏆 You completed all 3 levels! 🎉";
+          }
+        } else {
+          document.getElementById("message").innerHTML =
+            "🤔 Try another path to ⭐!";
+
+          document.getElementById("message").style.color = "#d32f2f";
+        }
+
+        isRunning = false;
+      }
+
+      // ======================================================
+      // RESET
+      // ======================================================
+
+      function resetGame() {
+        isRunning = false;
+
+        robotPosition = levels[currentLevel].start;
+
+        workspace.clear();
+
+        document.getElementById("message").innerHTML = "";
+
+        document.getElementById("steps").innerHTML = "";
+
+        document.getElementById("nextButton").style.display = "none";
+
+        createBoard();
+      }
+
+      // ======================================================
+      // NEXT LEVEL
+      // ======================================================
+
+      function nextLevel() {
+        if (currentLevel >= levels.length - 1) {
+          return;
+        }
+
+        currentLevel++;
+
+        robotPosition = levels[currentLevel].start;
+
+        workspace.clear();
+
+        document.getElementById("levelTitle").innerHTML =
+          "Level " + (currentLevel + 1);
+
+        document.getElementById("instructions").innerHTML =
+          levels[currentLevel].instructions;
+
+        document.getElementById("message").innerHTML = "";
+
+        document.getElementById("steps").innerHTML = "";
+
+        document.getElementById("nextButton").style.display = "none";
+
+        createBoard();
+      }
+
+      // ======================================================
+      // START
+      // ======================================================
+
+      document.getElementById("instructions").innerHTML =
+        levels[0].instructions;
+
+      createBoard();
+    </script>
+  </body>
+</html>

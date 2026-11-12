@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blockly Robot Challenge</title>
+
+    <!-- Blockly library -->
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #f0f8ff;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        color: #1976d2;
+      }
+
+      #game {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      #blocklyDiv {
+        width: 500px;
+        height: 450px;
+        border: 3px solid #1976d2;
+        border-radius: 12px;
+        background: white;
+      }
+
+      #board {
+        display: grid;
+        grid-template-columns: repeat(4, 70px);
+        grid-template-rows: repeat(2, 70px);
+        gap: 5px;
+        margin: 20px auto;
+      }
+
+      .cell {
+        width: 70px;
+        height: 70px;
+        background: white;
+        border: 2px solid #90caf9;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
+      }
+
+      button {
+        font-size: 20px;
+        padding: 12px 25px;
+        margin: 10px;
+        border: none;
+        border-radius: 10px;
+        background: #4caf50;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #388e3c;
+      }
+
+      #message {
+        font-size: 24px;
+        font-weight: bold;
+        min-height: 35px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>🤖 Help the Robot Find the Star ⭐</h1>
+
+    <p>Drag blocks to make the robot move!</p>
+
+    <div id="game">
+      <!-- Blockly workspace -->
+      <div id="blocklyDiv"></div>
+
+      <!-- Game -->
+      <div>
+        <h2>Robot Game</h2>
+
+        <div id="board">
+          <div class="cell" id="cell-0">🤖</div>
+          <div class="cell" id="cell-1"></div>
+          <div class="cell" id="cell-2"></div>
+          <div class="cell" id="cell-3"></div>
+
+          <div class="cell" id="cell-4"></div>
+          <div class="cell" id="cell-5"></div>
+          <div class="cell" id="cell-6"></div>
+          <div class="cell" id="cell-7">⭐</div>
+        </div>
+
+        <button onclick="runCode()">▶️ Run</button>
+        <button onclick="resetGame()">🔄 Reset</button>
+
+        <div id="message"></div>
+      </div>
+    </div>
+
+    <!-- Blockly Toolbox -->
+    <xml id="toolbox" style="display: none">
+      <block type="move_right"></block>
+      <block type="move_down"></block>
+    </xml>
+
+    <script>
+      // --------------------------------------------------
+      // Create custom Blockly blocks
+      // --------------------------------------------------
+
+      Blockly.Blocks["move_right"] = {
+        init: function () {
+          this.appendDummyInput().appendField("➡️ Move Right");
+
+          this.setPreviousStatement(true);
+          this.setNextStatement(true);
+          this.setColour(120);
+        },
+      };
+
+      Blockly.Blocks["move_down"] = {
+        init: function () {
+          this.appendDummyInput().appendField("⬇️ Move Down");
+
+          this.setPreviousStatement(true);
+          this.setNextStatement(true);
+          this.setColour(210);
+        },
+      };
+
+      // --------------------------------------------------
+      // Generate JavaScript code
+      // --------------------------------------------------
+
+      javascript.javascriptGenerator.forBlock["move_right"] = function (
+        block,
+        generator,
+      ) {
+        return "moveRight();\n";
+      };
+
+      javascript.javascriptGenerator.forBlock["move_down"] = function (
+        block,
+        generator,
+      ) {
+        return "moveDown();\n";
+      };
+
+      // --------------------------------------------------
+      // Start Blockly
+      // --------------------------------------------------
+
+      const workspace = Blockly.inject("blocklyDiv", {
+        toolbox: document.getElementById("toolbox"),
+        scrollbars: true,
+        trashcan: true,
+      });
+
+      // --------------------------------------------------
+      // Robot position
+      // --------------------------------------------------
+
+      let robotPosition = 0;
+
+      function drawRobot() {
+        for (let i = 0; i < 8; i++) {
+          document.getElementById("cell-" + i).innerHTML = "";
+        }
+
+        document.getElementById("cell-7").innerHTML = "⭐";
+        document.getElementById("cell-" + robotPosition).innerHTML = "🤖";
+      }
+
+      // --------------------------------------------------
+      // Robot movements
+      // --------------------------------------------------
+
+      function moveRight() {
+        // Do not move outside the grid
+        if (robotPosition % 4 < 3) {
+          robotPosition++;
+          drawRobot();
+        }
+      }
+
+      function moveDown() {
+        // Move down one row
+        if (robotPosition < 4) {
+          robotPosition += 4;
+          drawRobot();
+        }
+      }
+
+      // --------------------------------------------------
+      // Run Blockly program
+      // --------------------------------------------------
+
+      async function runCode() {
+        robotPosition = 0;
+        drawRobot();
+
+        document.getElementById("message").innerHTML = "";
+
+        // Get Blockly code
+        const code = javascript.javascriptGenerator.workspaceToCode(workspace);
+
+        try {
+          // Split the program into individual steps
+          const steps = code
+            .split("\n")
+            .map((step) => step.trim())
+            .filter((step) => step.length > 0);
+
+          // Run one step at a time
+          for (const step of steps) {
+            if (step === "moveRight();") {
+              moveRight();
+            }
+
+            if (step === "moveDown();") {
+              moveDown();
+            }
+
+            // Wait 700 milliseconds before next move
+            await new Promise((resolve) => setTimeout(resolve, 700));
+          }
+
+          // Check result
+          if (robotPosition === 7) {
+            document.getElementById("message").innerHTML =
+              "🎉 Great Job! You found the star! ⭐";
+
+            document.getElementById("message").style.color = "#2e7d32";
+          } else {
+            document.getElementById("message").innerHTML =
+              "🤔 Try again! Reach the star ⭐";
+
+            document.getElementById("message").style.color = "#d32f2f";
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      // --------------------------------------------------
+      // Reset game
+      // --------------------------------------------------
+
+      function resetGame() {
+        robotPosition = 0;
+        drawRobot();
+
+        document.getElementById("message").innerHTML = "";
+
+        workspace.clear();
+      }
+
+      // Draw robot when page loads
+      drawRobot();
+    </script>
+  </body>
+</html>
