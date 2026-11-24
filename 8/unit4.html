@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Procedures & Search Quest · Grade 8 · Sapporo International School
+    </title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", "Poppins", system-ui, sans-serif;
+      }
+
+      body {
+        background-color: #0b7b3e; /* Sapporo green */
+        color: #010101;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .game-container {
+        max-width: 1100px;
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 48px 48px 32px 32px;
+        box-shadow: 0 20px 30px rgba(1, 1, 1, 0.3);
+        overflow: hidden;
+        border: 4px solid #010101;
+      }
+
+      /* header with school colors */
+      .header {
+        background-color: #0b7b3e;
+        padding: 24px 32px 20px;
+        border-bottom: 6px solid #ee2649; /* crimson accent */
+        text-align: center;
+        position: relative;
+      }
+
+      .header h1 {
+        color: #ffffff;
+        font-size: 2.4rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        text-shadow: 3px 3px 0 #010101;
+        margin-bottom: 8px;
+      }
+
+      .header .subhead {
+        color: #010101;
+        background-color: #ee2649;
+        display: inline-block;
+        padding: 8px 24px;
+        border-radius: 40px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border: 3px solid #010101;
+        box-shadow: 4px 4px 0 #010101;
+      }
+
+      /* simple explanation card */
+      .explain-box {
+        background-color: #f6fff9;
+        margin: 24px 28px 12px;
+        padding: 22px 28px;
+        border-radius: 32px;
+        border: 3px solid #010101;
+        box-shadow: 6px 6px 0 #0b7b3e;
+        color: #010101;
+      }
+
+      .explain-box h2 {
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        color: #0b7b3e;
+        font-weight: 800;
+      }
+
+      .explain-box h2 span {
+        background: #ee2649;
+        color: #ffffff;
+        font-size: 1.8rem;
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        border: 3px solid #010101;
+      }
+
+      .explain-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-between;
+      }
+
+      .explain-item {
+        flex: 1 1 220px;
+        background: #ffffff;
+        padding: 18px;
+        border-radius: 24px;
+        border: 2px solid #010101;
+        box-shadow: 4px 4px 0 #0b7b3e;
+        font-size: 1.05rem;
+        line-height: 1.5;
+      }
+
+      .explain-item strong {
+        color: #ee2649;
+        font-size: 1.2rem;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .explain-item code {
+        background: #010101;
+        color: #0b7b3e;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-family: "Courier New", monospace;
+        font-weight: 700;
+      }
+
+      /* progress + level tracker */
+      .progress-area {
+        margin: 18px 28px 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .level-badge {
+        background: #010101;
+        color: #ee2649;
+        padding: 12px 24px;
+        border-radius: 40px;
+        font-weight: 800;
+        font-size: 1.3rem;
+        border: 3px solid #0b7b3e;
+        letter-spacing: 0.5px;
+      }
+
+      .progress-bar-bg {
+        flex: 1;
+        height: 28px;
+        background: #e0e0e0;
+        border-radius: 30px;
+        border: 3px solid #010101;
+        overflow: hidden;
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2);
+      }
+
+      .progress-fill {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #0b7b3e, #ee2649);
+        transition: width 0.4s ease;
+        border-radius: 30px;
+      }
+
+      /* challenge grid */
+      .challenge-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        padding: 18px 28px 28px;
+      }
+
+      .level-btn {
+        background: #ffffff;
+        border: 3px solid #010101;
+        border-radius: 20px;
+        padding: 16px 0;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #010101;
+        cursor: pointer;
+        transition: all 0.15s;
+        box-shadow: 5px 5px 0 #0b7b3e;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .level-btn small {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #ee2649;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .level-btn:hover:not(.locked):not(.completed) {
+        transform: translate(-2px, -2px);
+        box-shadow: 8px 8px 0 #0b7b3e;
+        background: #f0fff4;
+      }
+
+      .level-btn.locked {
+        background: #b0b0b0;
+        border-color: #4a4a4a;
+        box-shadow: 5px 5px 0 #4a4a4a;
+        color: #4a4a4a;
+        cursor: not-allowed;
+        opacity: 0.8;
+      }
+
+      .level-btn.locked small {
+        color: #4a4a4a;
+      }
+
+      .level-btn.completed {
+        background: #0b7b3e;
+        color: #ffffff;
+        border-color: #010101;
+        box-shadow: 5px 5px 0 #ee2649;
+      }
+
+      .level-btn.completed small {
+        color: #ffffff;
+        opacity: 0.9;
+      }
+
+      .level-btn.active {
+        border: 4px solid #ee2649;
+        box-shadow: 5px 5px 0 #010101;
+        background: #ffffe0;
+      }
+
+      /* question modal / area */
+      .question-panel {
+        background: #ffffff;
+        margin: 0 28px 28px;
+        padding: 24px 28px;
+        border-radius: 32px;
+        border: 4px solid #010101;
+        box-shadow: 8px 8px 0 #0b7b3e;
+        display: none;
+      }
+
+      .question-panel.show {
+        display: block;
+      }
+
+      .question-panel h3 {
+        font-size: 1.8rem;
+        color: #0b7b3e;
+        margin-bottom: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .question-panel h3 i {
+        background: #ee2649;
+        color: #fff;
+        font-style: normal;
+        width: 44px;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 3px solid #010101;
+        font-weight: 800;
+      }
+
+      .question-text {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin: 16px 0 20px;
+        padding: 16px;
+        background: #f6fff9;
+        border-radius: 20px;
+        border-left: 8px solid #ee2649;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .option-btn {
+        background: #ffffff;
+        border: 3px solid #010101;
+        border-radius: 60px;
+        padding: 16px 24px;
+        text-align: left;
+        font-size: 1.15rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.1s;
+        box-shadow: 4px 4px 0 #0b7b3e;
+        color: #010101;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .option-btn:hover:not(:disabled) {
+        background: #f0fff4;
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0 #0b7b3e;
+      }
+
+      .option-btn.correct-answer {
+        background: #0b7b3e;
+        color: #ffffff;
+        border-color: #010101;
+        box-shadow: 4px 4px 0 #ee2649;
+      }
+
+      .option-btn.wrong-answer {
+        background: #ee2649;
+        color: #ffffff;
+        border-color: #010101;
+        box-shadow: 4px 4px 0 #010101;
+      }
+
+      .option-btn:disabled {
+        cursor: default;
+        opacity: 0.9;
+      }
+
+      .feedback {
+        font-size: 1.2rem;
+        font-weight: 700;
+        padding: 16px;
+        border-radius: 20px;
+        margin-bottom: 16px;
+        display: none;
+        border: 3px solid #010101;
+      }
+
+      .feedback.success {
+        background: #0b7b3e;
+        color: #ffffff;
+      }
+
+      .feedback.error {
+        background: #ee2649;
+        color: #ffffff;
+      }
+
+      .feedback.show {
+        display: block;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        background: #0b7b3e;
+        color: #ffffff;
+        font-weight: 800;
+        padding: 14px 32px;
+        border-radius: 40px;
+        border: 3px solid #010101;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 5px 5px 0 #010101;
+        transition: 0.1s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 7px 7px 0 #010101;
+      }
+
+      .btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 3px 3px 0 #010101;
+      }
+
+      .btn.secondary {
+        background: #ee2649;
+        color: #ffffff;
+      }
+
+      .btn.ghost {
+        background: #ffffff;
+        color: #010101;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      /* footer */
+      .footer {
+        background: #010101;
+        color: #0b7b3e;
+        text-align: center;
+        padding: 16px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+        border-top: 6px solid #ee2649;
+      }
+
+      .footer span {
+        color: #ee2649;
+      }
+
+      @media (max-width: 700px) {
+        .challenge-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .header h1 {
+          font-size: 1.8rem;
+        }
+        .explain-grid {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <!-- header -->
+      <div class="header">
+        <h1>🔍 PROCEDURE QUEST</h1>
+        <div class="subhead">SAPPORO INTERNATIONAL SCHOOL · GRADE 8</div>
+      </div>
+
+      <!-- kid-friendly explanation -->
+      <div class="explain-box">
+        <h2><span>📘</span> Unit 4 · Simple explanation</h2>
+        <div class="explain-grid">
+          <div class="explain-item">
+            <strong>📦 Store blocks of code</strong>
+            Think of a <code>procedure</code> as a recipe box. You put a set of
+            instructions inside, give it a name, and use it again and again!
+          </div>
+          <div class="explain-item">
+            <strong>🔎 Find an element in a list</strong>
+            A <code>procedure</code> can search a list (like a treasure hunt).
+            You give it a list and a target, and it tells you where the target
+            is.
+          </div>
+          <div class="explain-item">
+            <strong>⚖️ Compare search algorithms</strong>
+            Two search recipes: <code>linear search</code> checks one by one.
+            <code>Binary search</code> splits the list in half — much faster for
+            big lists!
+          </div>
+        </div>
+      </div>
+
+      <!-- progress -->
+      <div class="progress-area">
+        <div class="level-badge" id="levelBadge">LEVEL 1 / 10</div>
+        <div class="progress-bar-bg">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- level buttons grid (10 challenges) -->
+      <div class="challenge-grid" id="challengeGrid">
+        <!-- generated by JS -->
+      </div>
+
+      <!-- question panel -->
+      <div class="question-panel" id="questionPanel">
+        <h3><i id="qNumber">1</i> Challenge</h3>
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="action-buttons">
+          <button class="btn" id="nextBtn" disabled>Next ➡️</button>
+          <button class="btn secondary" id="resetBtn">🔄 Reset game</button>
+        </div>
+      </div>
+
+      <!-- footer -->
+      <div class="footer">
+        <span>●</span> OXFORD INTERNATIONAL COMPUTING 8 · UNIT 4
+        <span>●</span> SAPPHIRE CODE <span>●</span>
+      </div>
+    </div>
+
+    <script>
+      // --------------------- DATA ---------------------
+      // 10 levels, each with question + options + correct index + explanation
+      const levels = [
+        {
+          // 1
+          question: "What is a procedure?",
+          options: [
+            "A block of code stored with a name that can be used many times.",
+            "A type of loop that repeats forever.",
+            "A variable that stores numbers.",
+            "A hardware device that stores data.",
+          ],
+          correct: 0,
+          explanation:
+            "A procedure is a named block of code that you can call/use whenever you need it.",
+        },
+        {
+          // 2
+          question:
+            "How do you use (call) a procedure named 'sayHello' in most programming languages?",
+          options: [
+            "sayHello()",
+            "call sayHello",
+            "procedure sayHello",
+            "use sayHello[]",
+          ],
+          correct: 0,
+          explanation:
+            "You write the procedure name followed by parentheses: sayHello().",
+        },
+        {
+          // 3
+          question:
+            "What does a procedure for finding an element in a list usually need?",
+          options: [
+            "The list and the target element.",
+            "Only the list.",
+            "Only the target element.",
+            "A random number.",
+          ],
+          correct: 0,
+          explanation:
+            "Search procedures need the list to search in AND the element you are looking for.",
+        },
+        {
+          // 4
+          question:
+            "Which search algorithm checks each element one by one, from start to end?",
+          options: [
+            "Linear search",
+            "Binary search",
+            "Quick search",
+            "Jump search",
+          ],
+          correct: 0,
+          explanation:
+            "Linear search goes through each item in order. It works on unsorted lists.",
+        },
+        {
+          // 5
+          question: "What is a key requirement for binary search to work?",
+          options: [
+            "The list must be sorted.",
+            "The list must be very short.",
+            "The list must contain only numbers.",
+            "The list must be empty.",
+          ],
+          correct: 0,
+          explanation:
+            "Binary search only works if the list is sorted (e.g., ascending order).",
+        },
+        {
+          // 6
+          question: "Which is usually faster for large sorted lists?",
+          options: [
+            "Binary search",
+            "Linear search",
+            "They are always the same speed",
+            "Neither works on large lists",
+          ],
+          correct: 0,
+          explanation:
+            "Binary search is much faster because it eliminates half the list each step.",
+        },
+        {
+          // 7
+          question: "Why do we use procedures?",
+          options: [
+            "To avoid repeating the same code and make programs easier to read.",
+            "To make programs run slower.",
+            "To use more memory.",
+            "To confuse other programmers.",
+          ],
+          correct: 0,
+          explanation:
+            "Procedures help us reuse code, keep things organized, and avoid repetition.",
+        },
+        {
+          // 8
+          question:
+            "In a linear search procedure, what does it return if the element is not found?",
+          options: [
+            "A special value like -1 or 'not found'",
+            "The first element of the list",
+            "The last element of the list",
+            "It always crashes",
+          ],
+          correct: 0,
+          explanation:
+            "Usually we return -1 or a message like 'not found' to show the target isn't there.",
+        },
+        {
+          // 9
+          question:
+            "Which procedure call correctly uses a procedure 'findInList' that takes (list, target)?",
+          options: [
+            "findInList(myList, 42)",
+            "findInList(myList 42)",
+            "findInList = myList, 42",
+            "procedure findInList(myList, 42)",
+          ],
+          correct: 0,
+          explanation:
+            "We call it by name and pass arguments inside parentheses, separated by commas.",
+        },
+        {
+          // 10
+          question: "Which statement best compares linear and binary search?",
+          options: [
+            "Linear search works on any list but is slower; binary search is faster but needs a sorted list.",
+            "Binary search works on any list but is slower; linear search needs a sorted list.",
+            "They both only work on sorted lists.",
+            "Linear search is always faster than binary search.",
+          ],
+          correct: 0,
+          explanation:
+            "Linear search is simple but slow; binary search is fast but requires sorting first.",
+        },
+      ];
+
+      // state
+      let currentLevel = 0; // 0-indexed (0 to 9)
+      let unlockedLevels = 1; // first level unlocked
+      let completedLevels = []; // stores indices (0-based) of completed levels
+      let answered = false;
+
+      // DOM elements
+      const challengeGrid = document.getElementById("challengeGrid");
+      const questionPanel = document.getElementById("questionPanel");
+      const qNumber = document.getElementById("qNumber");
+      const questionText = document.getElementById("questionText");
+      const optionsContainer = document.getElementById("optionsContainer");
+      const feedback = document.getElementById("feedback");
+      const nextBtn = document.getElementById("nextBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const levelBadge = document.getElementById("levelBadge");
+      const progressFill = document.getElementById("progressFill");
+
+      // --------------------- RENDER GRID ---------------------
+      function renderGrid() {
+        challengeGrid.innerHTML = "";
+        for (let i = 0; i < levels.length; i++) {
+          const btn = document.createElement("button");
+          btn.className = "level-btn";
+          const isUnlocked = i < unlockedLevels;
+          const isCompleted = completedLevels.includes(i);
+          const isActive = i === currentLevel && isUnlocked && !isCompleted;
+
+          if (isCompleted) {
+            btn.classList.add("completed");
+          } else if (!isUnlocked) {
+            btn.classList.add("locked");
+          }
+          if (isActive) {
+            btn.classList.add("active");
+          }
+
+          btn.innerHTML = `
+                ${i + 1}
+                <small>${isCompleted ? "✔ done" : isUnlocked ? "play" : "🔒"}</small>
+            `;
+
+          if (isUnlocked && !isCompleted) {
+            btn.addEventListener("click", () => {
+              if (currentLevel !== i) {
+                currentLevel = i;
+                answered = false;
+                renderGrid();
+                showQuestion(i);
+              }
+            });
+          } else if (isCompleted) {
+            btn.addEventListener("click", () => {
+              // completed levels can be viewed (but won't change progress)
+              if (currentLevel !== i) {
+                currentLevel = i;
+                answered = true; // already answered
+                renderGrid();
+                showQuestion(i, true);
+              }
+            });
+          }
+
+          challengeGrid.appendChild(btn);
+        }
+
+        // update progress bar & badge
+        const totalCompleted = completedLevels.length;
+        const percent = (totalCompleted / levels.length) * 100;
+        progressFill.style.width = percent + "%";
+        levelBadge.textContent = `LEVEL ${currentLevel + 1} / 10`;
+      }
+
+      // --------------------- SHOW QUESTION ---------------------
+      function showQuestion(index, reviewMode = false) {
+        const level = levels[index];
+        questionPanel.classList.add("show");
+        qNumber.textContent = index + 1;
+        questionText.textContent = level.question;
+
+        // render options
+        optionsContainer.innerHTML = "";
+        level.options.forEach((opt, optIndex) => {
+          const optBtn = document.createElement("button");
+          optBtn.className = "option-btn";
+          optBtn.textContent = `${String.fromCharCode(65 + optIndex)}. ${opt}`;
+
+          // If this level is already completed or reviewMode, disable and show correct
+          if (completedLevels.includes(index) || reviewMode) {
+            optBtn.disabled = true;
+            if (optIndex === level.correct) {
+              optBtn.classList.add("correct-answer");
+            }
+            // if user had chosen wrong (we don't store, but we can show correct)
+            // (kept simple)
+          } else {
+            optBtn.addEventListener("click", () =>
+              handleAnswer(optIndex, index),
+            );
+          }
+          optionsContainer.appendChild(optBtn);
+        });
+
+        // Reset feedback and next button
+        feedback.classList.remove("show", "success", "error");
+        feedback.textContent = "";
+        nextBtn.disabled = true;
+
+        if (completedLevels.includes(index) || reviewMode) {
+          // already completed: show success feedback, enable next if not last
+          feedback.classList.add("show", "success");
+          feedback.textContent = "✅ You already completed this level!";
+          if (index < levels.length - 1) {
+            nextBtn.disabled = false;
+          } else {
+            nextBtn.disabled = true;
+          }
+          answered = true;
+        } else {
+          answered = false;
+        }
+      }
+
+      // --------------------- HANDLE ANSWER ---------------------
+      function handleAnswer(selectedIndex, levelIndex) {
+        if (answered) return;
+        const level = levels[levelIndex];
+        const allOptions = document.querySelectorAll(".option-btn");
+        // disable all options
+        allOptions.forEach((btn) => (btn.disabled = true));
+
+        // mark correct and wrong
+        allOptions.forEach((btn, idx) => {
+          if (idx === level.correct) {
+            btn.classList.add("correct-answer");
+          } else if (idx === selectedIndex && idx !== level.correct) {
+            btn.classList.add("wrong-answer");
+          }
+        });
+
+        const isCorrect = selectedIndex === level.correct;
+
+        if (isCorrect) {
+          feedback.classList.add("show", "success");
+          feedback.textContent = "🎉 Correct! " + level.explanation;
+          // mark level as completed if not already
+          if (!completedLevels.includes(levelIndex)) {
+            completedLevels.push(levelIndex);
+            // unlock next level if this was the last unlocked one
+            if (
+              levelIndex + 1 < levels.length &&
+              unlockedLevels < levelIndex + 2
+            ) {
+              unlockedLevels = Math.min(levelIndex + 2, levels.length);
+            }
+          }
+        } else {
+          feedback.classList.add("show", "error");
+          feedback.textContent = "❌ Not quite. " + level.explanation;
+          // even if wrong, we do NOT mark completed, but we allow retry?
+          // For gamification, we keep the level unlocked to try again.
+          // But to keep progress, we don't add to completed.
+          // However, we want them to be able to retry: we re-enable options?
+          // For simplicity, we keep options disabled after one attempt.
+          // But we can allow them to reset the level via next? No — we give a "try again" button?
+          // Let's improve: after wrong answer, we allow clicking the same level from grid to retry.
+          // So we don't mark completed, but we set answered=false so they can try again?
+          // But we already disabled options. We need to allow re-attempt.
+          // We'll show a "try again" button? Simpler: after wrong, we enable "Try again"
+          // but we don't have space. Instead, we'll let them click the level button again to reset.
+          // So we set answered = false and re-render grid. But the options are disabled.
+          // We'll use a small timeout to reset the level if wrong.
+          answered = false;
+          // Use setTimeout to reset the same level after a moment, so they can retry
+          setTimeout(() => {
+            // only reset if the wrong answer is still displayed (user hasn't navigated away)
+            if (!completedLevels.includes(levelIndex)) {
+              // Reset the level view
+              // re-render options, clear feedback, etc.
+              // But we need to keep level index
+              if (currentLevel === levelIndex) {
+                // re-show question but re-enable options
+                showQuestion(levelIndex);
+                // re-attach event listeners (showQuestion already does)
+                // reset answered flag
+                answered = false;
+                // clear any wrong classes
+                document.querySelectorAll(".option-btn").forEach((btn) => {
+                  btn.classList.remove("correct-answer", "wrong-answer");
+                  btn.disabled = false;
+                });
+                // hide feedback
+                feedback.classList.remove("show", "success", "error");
+                feedback.textContent = "";
+                nextBtn.disabled = true;
+              }
+            }
+          }, 2500);
+          // we do not enable next button
+          nextBtn.disabled = true;
+          renderGrid(); // update grid (no completion added)
+          return; // skip the rest
+        }
+
+        // if correct, update grid, enable next if not last level
+        answered = true;
+        if (levelIndex < levels.length - 1) {
+          nextBtn.disabled = false;
+        } else {
+          nextBtn.disabled = true; // last level, no next
+        }
+        renderGrid();
+      }
+
+      // --------------------- NEXT BUTTON ---------------------
+      nextBtn.addEventListener("click", () => {
+        if (currentLevel < levels.length - 1) {
+          // go to next level if it's unlocked (should be)
+          if (currentLevel + 1 < unlockedLevels) {
+            currentLevel++;
+            answered = false;
+            showQuestion(currentLevel);
+            renderGrid();
+          } else {
+            // if next not unlocked (shouldn't happen after correct), do nothing
+          }
+        }
+      });
+
+      // --------------------- RESET GAME ---------------------
+      resetBtn.addEventListener("click", () => {
+        // reset state
+        currentLevel = 0;
+        unlockedLevels = 1;
+        completedLevels = [];
+        answered = false;
+        // hide panel
+        questionPanel.classList.remove("show");
+        // reset feedback etc
+        feedback.classList.remove("show", "success", "error");
+        feedback.textContent = "";
+        // re-render grid
+        renderGrid();
+        // optionally show first question? we can show it for convenience
+        showQuestion(0);
+      });
+
+      // --------------------- INIT ---------------------
+      function init() {
+        // start with first level unlocked and active
+        currentLevel = 0;
+        unlockedLevels = 1;
+        completedLevels = [];
+        renderGrid();
+        // show first question by default
+        showQuestion(0);
+      }
+
+      init();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎮 Unit 4 — Search Master | SIS</title>
+    <style>
+      /* ============================================================
+     SAPPORO INTERNATIONAL SCHOOL COLOR THEME
+     Green  #0B7B3E — primary / success / buttons
+     Black  #010101 — background / depth
+     Red    #EE2649 — accent / errors / stars
+     ============================================================ */
+      :root {
+        --sis-green: #0b7b3e;
+        --sis-green-light: #14a855;
+        --sis-green-dark: #075a2c;
+        --sis-black: #010101;
+        --sis-black-soft: #0d0d0d;
+        --sis-black-panel: #141414;
+        --sis-red: #ee2649;
+        --sis-red-dark: #b81a37;
+        --text: #f4f4f4;
+        --muted: #a8a8a8;
+        --border: #262626;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background:
+          radial-gradient(
+            900px 500px at 15% -10%,
+            rgba(11, 123, 62, 0.25),
+            transparent 60%
+          ),
+          radial-gradient(
+            700px 400px at 90% 110%,
+            rgba(238, 38, 73, 0.18),
+            transparent 60%
+          ),
+          var(--sis-black);
+        color: var(--text);
+        min-height: 100vh;
+      }
+      header {
+        text-align: center;
+        padding: 26px 16px 10px;
+        border-bottom: 2px solid var(--sis-green);
+        background: linear-gradient(
+          180deg,
+          rgba(11, 123, 62, 0.15),
+          transparent
+        );
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.9rem;
+        letter-spacing: 1px;
+        color: #fff;
+      }
+      header h1 .sis-green {
+        color: var(--sis-green-light);
+      }
+      header h1 .sis-red {
+        color: var(--sis-red);
+      }
+      header p {
+        color: var(--muted);
+        margin: 6px 0 0;
+        font-size: 0.92rem;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 290px 1fr 380px;
+        gap: 16px;
+        padding: 16px;
+        max-width: 1550px;
+        margin: 0 auto;
+      }
+      @media (max-width: 1100px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: linear-gradient(
+          180deg,
+          var(--sis-black-panel),
+          var(--sis-black-soft)
+        );
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--sis-green);
+        border-radius: 14px;
+        padding: 14px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      }
+      .panel h3 {
+        color: var(--sis-green-light);
+        margin-top: 0;
+      }
+
+      /* Level list */
+      .levels {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .levels li {
+        padding: 9px 11px;
+        margin-bottom: 7px;
+        border-radius: 10px;
+        background: #0a0a0a;
+        border: 1px solid var(--border);
+        border-left: 3px solid transparent;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.18s;
+        font-size: 0.85rem;
+        color: var(--text);
+      }
+      .levels li:hover {
+        border-left-color: var(--sis-green);
+        background: #0f0f0f;
+        transform: translateX(2px);
+      }
+      .levels li.active {
+        border-left-color: var(--sis-red);
+        background: linear-gradient(
+          90deg,
+          rgba(11, 123, 62, 0.18),
+          transparent
+        );
+        color: #fff;
+      }
+      .levels li.locked {
+        opacity: 0.38;
+        cursor: not-allowed;
+      }
+      .levels li.locked:hover {
+        transform: none;
+        border-left-color: transparent;
+      }
+      .star {
+        color: var(--sis-red);
+        text-shadow: 0 0 8px rgba(238, 38, 73, 0.6);
+      }
+
+      /* Task area */
+      .task h2 {
+        margin: 0 0 6px;
+        font-size: 1.18rem;
+        color: var(--sis-green-light);
+      }
+      .task .goal {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-bottom: 10px;
+        line-height: 1.5;
+      }
+      .badge {
+        display: inline-block;
+        background: rgba(11, 123, 62, 0.2);
+        border: 1px solid var(--sis-green);
+        color: var(--sis-green-light);
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .task pre {
+        background: var(--sis-black);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--sis-red);
+        border-radius: 10px;
+        padding: 10px;
+        overflow-x: auto;
+        font-size: 0.82rem;
+        color: #d8d8d8;
+        max-height: 200px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 280px;
+        background: var(--sis-black);
+        color: #eaeaea;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 0.88rem;
+        line-height: 1.45;
+        resize: vertical;
+        caret-color: var(--sis-green-light);
+      }
+      textarea:focus {
+        outline: none;
+        border-color: var(--sis-green);
+        box-shadow: 0 0 0 2px rgba(11, 123, 62, 0.3);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      button {
+        background: linear-gradient(
+          180deg,
+          var(--sis-green-light),
+          var(--sis-green)
+        );
+        color: #fff;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: 0.15s;
+        letter-spacing: 0.3px;
+      }
+      button:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.12);
+        box-shadow: 0 4px 14px rgba(11, 123, 62, 0.5);
+      }
+      button.ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      button.ghost:hover {
+        border-color: var(--sis-red);
+        color: var(--sis-red);
+        box-shadow: 0 4px 14px rgba(238, 38, 73, 0.25);
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Console */
+      .console {
+        background: var(--sis-black);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--sis-green);
+        border-radius: 10px;
+        padding: 12px;
+        height: 430px;
+        overflow-y: auto;
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 0.82rem;
+        white-space: pre-wrap;
+        color: var(--sis-green-light);
+      }
+      .console .err {
+        color: var(--sis-red);
+      }
+      .console .ok {
+        color: var(--sis-green-light);
+      }
+      .console .gold {
+        color: var(--sis-red);
+        font-weight: 700;
+      }
+
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(
+          180deg,
+          var(--sis-green),
+          var(--sis-green-dark)
+        );
+        border: 2px solid var(--sis-red);
+        color: #fff;
+        padding: 14px 22px;
+        border-radius: 12px;
+        font-weight: 800;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: 0.4s;
+        pointer-events: none;
+        z-index: 999;
+        box-shadow: 0 8px 30px rgba(238, 38, 73, 0.4);
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .progress {
+        height: 10px;
+        background: var(--sis-black);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 8px;
+        border: 1px solid var(--border);
+      }
+      .progress > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--sis-green), var(--sis-red));
+        transition: 0.4s;
+        box-shadow: 0 0 10px rgba(238, 38, 73, 0.5);
+      }
+      .hint {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 8px;
+        line-height: 1.4;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--sis-black);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--sis-green);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--sis-red);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>
+        <span class="sis-green">🔍 Unit 4</span>
+        <span class="sis-red">·</span>
+        Search Master
+      </h1>
+      <p>
+        Oxford International Computing 8 · Procedures & Search Algorithms ·
+        10-Level Challenge
+      </p>
+    </header>
+
+    <div class="layout">
+      <aside class="panel">
+        <h3>🗺️ Level Map</h3>
+        <ul class="levels" id="levelList"></ul>
+        <div class="progress"><div id="progressBar"></div></div>
+        <p class="hint" id="progressText">0 / 10 complete</p>
+        <p class="hint" id="badgeText">🏅 Badges: none yet</p>
+      </aside>
+
+      <main class="panel task">
+        <span class="badge" id="taskBadge">LEVEL</span>
+        <h2 id="taskTitle">Loading...</h2>
+        <div class="goal" id="taskGoal"></div>
+        <pre id="taskExample"></pre>
+        <textarea id="editor" spellcheck="false"></textarea>
+        <div class="controls">
+          <button id="runBtn" disabled>▶ Run Code</button>
+          <button class="ghost" id="resetBtn">↺ Reset</button>
+          <button class="ghost" id="hintBtn">💡 Hint</button>
+        </div>
+        <p class="hint" id="statusLine">Loading Python engine...</p>
+      </main>
+
+      <aside class="panel">
+        <h3>🖥️ Console</h3>
+        <div class="console" id="console"></div>
+      </aside>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+    <script>
+      /* ============================================================
+   LEVEL DEFINITIONS — Unit 4: Procedures & Search Algorithms
+   Each level: title, badge, goal, example, starter, test(out), hint
+   ============================================================ */
+      const LEVELS = [
+        {
+          title: "Level 1 — Awaken the Code Block",
+          badge: "🔧 Code Block",
+          goal: "Store the repeated three print lines inside a procedure called cheer(), then call cheer() twice.",
+          example: `def cheer():
+    print("Go!")
+    print("Team!")
+    print("Win!")
+
+cheer()
+cheer()`,
+          starter: `# TODO: define a procedure cheer()
+# inside it put three prints: "Go!", "Team!", "Win!"
+# then call cheer() twice
+`,
+          test: (out) => {
+            const c = (out.match(/Go!/g) || []).length;
+            return c >= 2 && out.includes("Team!") && out.includes("Win!");
+          },
+          hint: "def cheer(): then indent three print lines, then write cheer() twice at the left margin.",
+        },
+        {
+          title: "Level 2 — Procedure Call Training",
+          badge: "🔧 Code Block",
+          goal: "Define a procedure scan() that prints 'Scanning...', then call it 3 times.",
+          example: `def scan():
+    print("Scanning...")
+
+scan()
+scan()
+scan()`,
+          starter: `# TODO: define the scan() procedure
+# TODO: call scan() three times
+`,
+          test: (out) => (out.match(/Scanning\.\.\./g) || []).length >= 3,
+          hint: 'def scan(): print("Scanning...") then write scan() three times.',
+        },
+        {
+          title: "Level 3 — Custom Skill (Parameters)",
+          badge: "🎯 Parameter Pro",
+          goal: "Define check_item(item) that prints 'Checking ' + item, then call it with 'sword' and 'potion'.",
+          example: `def check_item(item):
+    print("Checking", item)
+
+check_item("sword")
+check_item("potion")`,
+          starter: `# TODO: define check_item(item)
+# TODO: call check_item("sword") and check_item("potion")
+`,
+          test: (out) =>
+            out.includes("Checking sword") && out.includes("Checking potion"),
+          hint: 'Put the parameter in brackets: def check_item(item): print("Checking", item)',
+        },
+        {
+          title: "Level 4 — Procedure + List",
+          badge: "🎯 Parameter Pro",
+          goal: "Loop through the items list and call check_item() for each item.",
+          example: `items = ["sword", "potion", "shield"]
+
+def check_item(item):
+    print("Checking", item)
+
+for x in items:
+    check_item(x)`,
+          starter: `items = ["sword", "potion", "shield"]
+
+def check_item(item):
+    print("Checking", item)
+
+# TODO: loop through items and call check_item() for each one
+`,
+          test: (out) =>
+            out.includes("Checking sword") &&
+            out.includes("Checking potion") &&
+            out.includes("Checking shield"),
+          hint: "for x in items: check_item(x)",
+        },
+        {
+          title: "Level 5 — Linear Search Procedure (Basics)",
+          badge: "🔍 Linear Scout",
+          goal: "Define linear_search(items, target): loop through the list, print 'Found ' + target and return if found, otherwise print 'Not found' after the loop.",
+          example: `def linear_search(items, target):
+    for item in items:
+        if item == target:
+            print("Found", target)
+            return
+    print("Not found")
+
+linear_search(["apple","banana"], "banana")
+linear_search(["apple","banana"], "grape")`,
+          starter: `def linear_search(items, target):
+    # TODO: loop through items
+    # if item == target, print Found and return
+    # after the loop, print Not found
+    pass
+
+linear_search(["apple", "banana", "cherry"], "banana")
+linear_search(["apple", "banana", "cherry"], "grape")
+`,
+          test: (out) =>
+            out.includes("Found banana") && out.includes("Not found"),
+          hint: 'for item in items: if item == target: print("Found", target); return — then print("Not found") after the loop.',
+        },
+        {
+          title: "Level 6 — Linear Search Returns an Index",
+          badge: "🔍 Linear Scout",
+          goal: "Define linear_search_index(items, target): return the target's index, or -1 if not found.",
+          example: `def linear_search_index(items, target):
+    for i in range(len(items)):
+        if items[i] == target:
+            return i
+    return -1
+
+print(linear_search_index(["a","b","c"], "b"))  # 1
+print(linear_search_index(["a","b","c"], "z"))  # -1`,
+          starter: `def linear_search_index(items, target):
+    # TODO: return the index of target, or -1 if not found
+    pass
+
+print(linear_search_index(["a", "b", "c"], "b"))  # should print 1
+print(linear_search_index(["a", "b", "c"], "z"))  # should print -1
+`,
+          test: (out) => {
+            const nums = out.match(/-?\d+/g) || [];
+            return nums.includes("1") && nums.includes("-1");
+          },
+          hint: "for i in range(len(items)): if items[i] == target: return i — then return -1 at the end.",
+        },
+        {
+          title: "Level 7 — The Requirement for Binary Search",
+          badge: "⚡ Divide & Conquer",
+          goal: "Define can_binary_search(items): check whether the list is sorted from smallest to largest, and return True or False.",
+          example: `def can_binary_search(items):
+    for i in range(len(items)-1):
+        if items[i] > items[i+1]:
+            return False
+    return True
+
+print(can_binary_search([1,3,5,7]))  # True
+print(can_binary_search([1,5,3,7]))  # False`,
+          starter: `def can_binary_search(items):
+    # TODO: check whether the list is sorted (smallest to largest)
+    pass
+
+print(can_binary_search([1, 3, 5, 7]))   # True
+print(can_binary_search([1, 5, 3, 7]))   # False
+`,
+          test: (out) => out.includes("True") && out.includes("False"),
+          hint: "for i in range(len(items)-1): if items[i] > items[i+1]: return False — then return True at the end.",
+        },
+        {
+          title: "Level 8 — The Speed Showdown",
+          badge: "⚡ Divide & Conquer",
+          goal: "Run the step-counting comparison code, then print 'Binary is faster'.",
+          example: `# Linear search steps vs binary search steps
+# In 100 sorted numbers, find 99
+# Linear ≈ 99 steps, Binary ≈ 7 steps`,
+          starter: `def linear_steps(items, target):
+    steps = 0
+    for item in items:
+        steps += 1
+        if item == target:
+            return steps
+    return steps
+
+def binary_steps(items, target):
+    steps = 0
+    low = 0
+    high = len(items) - 1
+    while low <= high:
+        steps += 1
+        mid = (low + high) // 2
+        if items[mid] == target:
+            return steps
+        elif items[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return steps
+
+data = list(range(1, 101))
+target = 99
+print("Linear steps:", linear_steps(data, target))
+print("Binary steps:", binary_steps(data, target))
+
+# TODO: print the conclusion "Binary is faster"
+`,
+          test: (out) =>
+            /Linear steps:\s*\d+/.test(out) &&
+            /Binary steps:\s*\d+/.test(out) &&
+            out.toLowerCase().includes("binary is faster"),
+          hint: 'Add at the end: print("Binary is faster")',
+        },
+        {
+          title: "Level 9 — Choose the Right Algorithm",
+          badge: "🧠 Algorithm Thinker",
+          goal: "Scenario A: an unsorted list of names, find 'Alice' → print 'linear'. Scenario B: a sorted list of 10000 student IDs, find 8888 → print 'binary'.",
+          example: `# A: unsorted → only linear search is possible
+print("linear")
+# B: sorted and large → binary search is faster
+print("binary")`,
+          starter: `# Scenario A: an unsorted list of names, find "Alice"
+# Scenario B: a sorted list of 10000 student IDs, find 8888
+
+# TODO: print your choice for scenario A
+# TODO: print your choice for scenario B
+`,
+          test: (out) =>
+            out.toLowerCase().includes("linear") &&
+            out.toLowerCase().includes("binary"),
+          hint: 'A unsorted → print("linear"); B sorted and large → print("binary")',
+        },
+        {
+          title: "👑 Level 10 — BOSS: Search Master Certification",
+          badge: "👑 Search Master",
+          goal: "Define find_linear() and find_binary() procedures, search the same sorted list for 23, print both step counts, then print 'Search Master!'.",
+          example: `data = [2,5,8,12,16,23,38,56,72,91]
+target = 23
+
+def find_linear(items, target):
+    steps = 0
+    for x in items:
+        steps += 1
+        if x == target: return steps
+    return steps
+
+def find_binary(items, target):
+    steps = 0
+    low, high = 0, len(items)-1
+    while low <= high:
+        steps += 1
+        mid = (low + high)//2
+        if items[mid] == target: return steps
+        elif items[mid] < target: low = mid + 1
+        else: high = mid - 1
+    return steps
+
+print("Linear:", find_linear(data, target))
+print("Binary:", find_binary(data, target))
+print("Search Master!")`,
+          starter: `data = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+target = 23
+
+def find_linear(items, target):
+    # TODO: return the number of steps
+    pass
+
+def find_binary(items, target):
+    # TODO: return the number of steps
+    pass
+
+# TODO: print the Linear step count
+# TODO: print the Binary step count
+# TODO: print("Search Master!")
+`,
+          test: (out) => {
+            const nums = out.match(/\d+/g) || [];
+            return nums.length >= 2 && out.includes("Search Master!");
+          },
+          hint: 'Reuse the step-counting logic from Level 8 and wrap it in two procedures. End with print("Search Master!")',
+        },
+      ];
+
+      /* ============================================================
+   State
+   ============================================================ */
+      let pyodide = null;
+      let currentLevel = 0;
+      let completed = new Array(LEVELS.length).fill(false);
+
+      /* ============================================================
+   DOM
+   ============================================================ */
+      const $ = (id) => document.getElementById(id);
+      const levelListEl = $("levelList");
+      const taskTitleEl = $("taskTitle");
+      const taskGoalEl = $("taskGoal");
+      const taskExampleEl = $("taskExample");
+      const taskBadgeEl = $("taskBadge");
+      const editorEl = $("editor");
+      const consoleEl = $("console");
+      const runBtn = $("runBtn");
+      const resetBtn = $("resetBtn");
+      const hintBtn = $("hintBtn");
+      const statusLine = $("statusLine");
+      const toastEl = $("toast");
+      const progressBar = $("progressBar");
+      const progressText = $("progressText");
+      const badgeText = $("badgeText");
+
+      /* ============================================================
+   Badge system
+   ============================================================ */
+      function updateBadges() {
+        const badges = [];
+        if (completed[0] || completed[1]) badges.push("🔧 Code Block");
+        if (completed[2] || completed[3]) badges.push("🎯 Parameter Pro");
+        if (completed[4] || completed[5]) badges.push("🔍 Linear Scout");
+        if (completed[6] || completed[7]) badges.push("⚡ Divide & Conquer");
+        if (completed[8]) badges.push("🧠 Algorithm Thinker");
+        if (completed[9]) badges.push("👑 Search Master");
+        badgeText.textContent = badges.length
+          ? "🏅 Badges: " + badges.join(" · ")
+          : "🏅 Badges: none yet";
+      }
+
+      /* ============================================================
+   UI
+   ============================================================ */
+      function buildLevelList() {
+        levelListEl.innerHTML = "";
+        LEVELS.forEach((lvl, i) => {
+          const li = document.createElement("li");
+          const locked = i > 0 && !completed[i - 1];
+          li.className = locked ? "locked" : i === currentLevel ? "active" : "";
+          li.innerHTML = `<span>${lvl.title}</span><span class="star">${completed[i] ? "⭐" : ""}</span>`;
+          if (!locked) li.onclick = () => loadLevel(i);
+          levelListEl.appendChild(li);
+        });
+        const done = completed.filter(Boolean).length;
+        progressBar.style.width = (done / LEVELS.length) * 100 + "%";
+        progressText.textContent = `${done} / ${LEVELS.length} complete`;
+        updateBadges();
+      }
+
+      function loadLevel(i) {
+        currentLevel = i;
+        const lvl = LEVELS[i];
+        taskTitleEl.textContent = lvl.title;
+        taskGoalEl.textContent = lvl.goal;
+        taskExampleEl.textContent = lvl.example;
+        taskBadgeEl.textContent = lvl.badge;
+        editorEl.value = lvl.starter;
+        consoleEl.innerHTML = "";
+        log("▶ Loaded " + lvl.title, "gold");
+        buildLevelList();
+        saveState();
+      }
+
+      function log(msg, cls = "") {
+        const span = document.createElement("span");
+        span.className = cls;
+        span.textContent = msg + "\n";
+        consoleEl.appendChild(span);
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+      }
+
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        setTimeout(() => toastEl.classList.remove("show"), 2200);
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(
+            "unit4-searchmaster-sis",
+            JSON.stringify({ completed, currentLevel }),
+          );
+        } catch (e) {}
+      }
+      function loadState() {
+        try {
+          const s = JSON.parse(
+            localStorage.getItem("unit4-searchmaster-sis") || "{}",
+          );
+          if (
+            Array.isArray(s.completed) &&
+            s.completed.length === LEVELS.length
+          ) {
+            completed = s.completed;
+          }
+          if (typeof s.currentLevel === "number") currentLevel = s.currentLevel;
+        } catch (e) {}
+      }
+
+      /* ============================================================
+   Boot Pyodide
+   ============================================================ */
+      async function bootPyodide() {
+        statusLine.textContent =
+          "Loading Python engine (about 10s the first time)...";
+        try {
+          pyodide = await loadPyodide({
+            stdout: (text) => log(text, "ok"),
+            stderr: (text) => log(text, "err"),
+          });
+          statusLine.textContent = "✅ Python is ready! Pick a level to begin.";
+          runBtn.disabled = false;
+          loadLevel(currentLevel);
+          buildLevelList();
+        } catch (e) {
+          statusLine.textContent = "❌ Failed to load the Python engine.";
+          console.error(e);
+        }
+      }
+
+      /* ============================================================
+   Run code
+   ============================================================ */
+      let capturedOutput = "";
+
+      async function runCode() {
+        if (!pyodide) return;
+        consoleEl.innerHTML = "";
+        capturedOutput = "";
+
+        pyodide.setStdout({
+          batched: (msg) => {
+            capturedOutput += msg + "\n";
+            log(msg, "ok");
+          },
+        });
+        pyodide.setStderr({
+          batched: (msg) => {
+            capturedOutput += msg + "\n";
+            log(msg, "err");
+          },
+        });
+
+        const code = editorEl.value;
+        runBtn.disabled = true;
+        runBtn.textContent = "⏳ Running...";
+
+        try {
+          await pyodide.runPythonAsync(code);
+        } catch (err) {
+          log("❌ " + err.message, "err");
+          capturedOutput += err.message;
+        }
+
+        runBtn.disabled = false;
+        runBtn.textContent = "▶ Run Code";
+
+        const lvl = LEVELS[currentLevel];
+        let passed = false;
+        try {
+          passed = lvl.test(capturedOutput);
+        } catch (e) {
+          passed = false;
+        }
+
+        if (passed && !completed[currentLevel]) {
+          completed[currentLevel] = true;
+          log("\n⭐ LEVEL UP! You earned a star ⭐", "gold");
+          showToast("⭐ Level Complete!");
+          buildLevelList();
+          saveState();
+          if (completed.every(Boolean)) {
+            setTimeout(() => {
+              log(
+                "\n🎉🎉🎉 ALL LEVELS COMPLETE! You are a SEARCH MASTER! 🎉🎉🎉",
+                "gold",
+              );
+              showToast("👑 SEARCH MASTER!");
+            }, 300);
+          }
+        } else if (passed) {
+          log("\n✅ This level is already complete — great job!", "ok");
+        } else {
+          log("\n💡 Not quite — check the goal and try again.", "err");
+        }
+      }
+
+      /* ============================================================
+   Buttons
+   ============================================================ */
+      runBtn.onclick = runCode;
+      resetBtn.onclick = () => {
+        editorEl.value = LEVELS[currentLevel].starter;
+        consoleEl.innerHTML = "";
+      };
+      hintBtn.onclick = () =>
+        log("💡 Hint: " + LEVELS[currentLevel].hint, "gold");
+
+      editorEl.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+          e.preventDefault();
+          const start = editorEl.selectionStart;
+          editorEl.value =
+            editorEl.value.slice(0, start) +
+            "    " +
+            editorEl.value.slice(editorEl.selectionEnd);
+          editorEl.selectionStart = editorEl.selectionEnd = start + 4;
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          e.preventDefault();
+          runCode();
+        }
+      });
+
+      /* ============================================================
+   Init
+   ============================================================ */
+      loadState();
+      buildLevelList();
+      bootPyodide();
+    </script>
+  </body>
+</html>
